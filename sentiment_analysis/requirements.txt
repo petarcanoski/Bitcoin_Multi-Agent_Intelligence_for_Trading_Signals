@@ -1,0 +1,22 @@
+# Core NLP and ML
+transformers>=4.36.0
+torch>=2.2.0
+sentencepiece>=0.1.99
+
+# API and HTTP
+requests>=2.31.0
+requests-cache>=1.1.1
+
+# Data processing
+pandas>=2.1.4
+numpy>=1.26.2
+
+# Configuration and environment
+python-dotenv>=1.0.0
+pydantic>=2.5.3
+
+# Additional utilities
+python-dateutil>=2.8.2
+
+
+

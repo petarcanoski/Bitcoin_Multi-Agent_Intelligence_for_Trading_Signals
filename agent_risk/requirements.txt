@@ -1,0 +1,18 @@
+# Risk & Volatility Agent Dependencies
+
+# Core dependencies
+pydantic>=2.0.0
+requests>=2.31.0
+requests-cache>=1.0.0
+python-dotenv>=1.0.0
+
+# Data handling
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Optional: For advanced on-chain analysis (if you get API keys later)
+# glassnode>=1.0.0  # Requires paid API
+
+# Development
+pytest>=7.4.0
+
