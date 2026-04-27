@@ -37,3 +37,6 @@ Thumbs.db
 
 # Pip
 pip-wheel-metadata/
+
+sentiment_agent_cache.sqlite
+

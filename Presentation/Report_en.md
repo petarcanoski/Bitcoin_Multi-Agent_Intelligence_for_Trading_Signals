@@ -1,264 +1,323 @@
-# Multi-Agent Bitcoin Trading Intelligence System - Project Report
-
-## 1. Executive Overview
-This project implements a modular multi-agent system for Bitcoin trading support. Instead of relying on one monolithic model, the system separates intelligence into specialized agents and then fuses them through a coordinator.
-
-Core idea:
-- Agent 1 understands **market structure** from technical features.
-- Agent 2 understands **narrative pressure** from news, social sentiment, and macro indicators.
-- Agent 3 understands **risk regime** from on-chain and geopolitical stress.
-- Agent 4 (Coordinator) combines all outputs into one final `BUY/SELL/HOLD` decision with explainable reasoning.
-
-This architecture improves interpretability, resilience, and team parallelization.
-
-## 2. Project Goals
-The system is designed to:
-1. Produce an explainable trading signal (`buy/sell/hold`).
-2. Combine heterogeneous information sources (price, text, macro, blockchain, events).
-3. Keep each module independent for team development.
-4. Support both real-data mode and fallback/mock mode for reliable demos.
-
-## 3. System Architecture
-### 3.1 High-level flow
-1. **Agent 1 (Technical)** runs inference over pretrained models using `features_1h.parquet`.
-2. **Agent 2 (Sentiment+Macro)** collects text + macro context and outputs a directional sentiment signal.
-3. **Agent 3 (Risk+Volatility)** produces a risk state (`low_risk/medium_risk/high_risk`).
-4. **Agent 4 (Coordinator)** fuses Agent 1 and Agent 2 directional conviction, then adjusts by Agent 3 risk.
-5. Final result is returned as an explainable coordinator signal.
-
-### 3.2 Modularity principle
-Each agent is intentionally isolated:
-- Agent folders are separate: `coordinator_agent/`, `sentiment_analysis/`, `agent_risk/`, and technical inference wrapper in `coordinator_agent/technical_agent.py`.
-- Coordinator invokes sentiment and risk through JSON subprocess bridges (`run_agent_json.py`) to avoid module-name collisions and keep dependency boundaries clean.
-
-## 4. Agent 1 - Technical Analysis
-Reference: `Presentation/01_Agent1_Technical_Analysis.md`
-
-### 4.1 Role
-Agent 1 is the directional market-structure module. It predicts whether to trade and in which direction based only on engineered technical features derived from OHLCV.
-
-### 4.2 Inputs
-From `bitcoin-predictor-dev`:
-- `src/models/trade/best_model.pt`
-- `src/models/direction/best_model.pt`
-- `data/processed/features_1h.parquet`
-
-### 4.3 Method
-- Loads two pretrained `CNNLSTMModel` checkpoints.
-- Reconstructs expected input dimension from checkpoint weights.
-- Builds latest sequence window (typically 60 rows).
-- Runs:
-  - Trade model: is a trade justified?
-  - Direction model: if yes, long or short?
-
-### 4.4 Decision logic
-- If `trade_prob < 0.55` -> `hold`
-- Else if `long_prob >= 0.5` -> `buy`
-- Else -> `sell`
-
-Confidence:
-- Hold case: `1 - trade_prob`
-- Buy/sell case: `trade_prob * max(long_prob, 1 - long_prob)`
-
-### 4.5 Why it matters
-This agent contributes high-frequency market behavior intelligence and is weighted more heavily in final fusion because it is directly trained on market feature sequences.
-
-## 5. Agent 2 - Sentiment + Macro Analysis
-Reference: `Presentation/02_Agent2_Sentiment_Macro.md`
-
-### 5.1 Role
-Agent 2 is the NLP + macro intelligence module. It captures fundamental and narrative pressure that technical indicators alone cannot capture.
-
-### 5.2 Inputs
-- News data (NewsAPI; fallback mock when unavailable)
-- Twitter/X monitored account data (currently configurable; fallback mock)
-- Macro indicators (Alpha Vantage CPI attempt + simulated macro events when needed)
-- Market context (CoinGecko)
-
-### 5.3 NLP engine
-- Model: `ProsusAI/finbert`
-- For each text item:
-  - infer class probabilities
-  - score = `positive_prob - negative_prob`
-  - confidence = max class probability
-- If model fails, fallback keyword sentiment is used.
-
-### 5.4 Time relevance and aggregation
-Each item is time-decayed:
-- `relevance = decay_factor * confidence`
-- more recent items have higher impact
-
-Weighted sentiment average:
-- `avg_sentiment = sum(sentiment * relevance) / sum(relevance)`
-
-### 5.5 Macro scoring
-Macro impacts map to numeric values:
-- positive -> `+1`
-- neutral -> `0`
-- negative -> `-1`
-
-Aggregate macro score is weighted by indicator importance.
-
-### 5.6 Final Agent 2 signal
-`combined_score = 0.40*news + 0.30*twitter + 0.30*macro`
-
-- `> 0.3` -> `buy`
-- `< -0.3` -> `sell`
-- otherwise -> `hold`
-
-### 5.7 Why it matters
-Agent 2 injects policy/news/social context (CPI, Fed tone, trade-war/tariff sentiment, market narrative), improving robustness against non-technical shocks.
-
-## 6. Agent 3 - Risk + Volatility Analysis
-Reference: `Presentation/03_Agent3_Risk_Volatility.md`
-
-### 6.1 Role
-Agent 3 does not predict direction directly. It evaluates regime risk and market instability so the system can avoid overconfident trades in dangerous environments.
-
-### 6.2 Inputs
-- On-chain metrics (volume, active addresses, exchange flows, whale activity, hash rate, mempool, etc.)
-- Geopolitical events (wars, sanctions, political/economic instability)
-
-### 6.3 Scoring
-`combined_risk = 0.60*onchain_risk + 0.40*geopolitical_risk`
-
-Thresholds:
-- `< 0.3` -> `low_risk`
-- `> 0.7` -> `high_risk`
-- else -> `medium_risk`
-
-A volatility sub-score is also computed (supporting diagnostic signal).
-
-### 6.4 Confidence
-Confidence increases with data availability:
-- on-chain data coverage
-- geopolitical event coverage
-- final confidence is averaged across both components.
-
-### 6.5 Why it matters
-Agent 3 acts as a safety layer for final decision control. It can suppress aggressive bullish/bearish actions when the environment is unstable.
-
-## 7. Agent 4 - Coordinator and Final Decision
-Reference: `Presentation/04_Agent4_Coordinator.md`
-
-### 7.1 Role
-Coordinator merges all agent outputs into one actionable, explainable decision.
-
-### 7.2 Integration approach
-- Agent 1: direct class call (`TechnicalAgent.run()`)
-- Agent 2 and Agent 3: subprocess JSON scripts (`run_agent_json.py`)
-
-### 7.3 Fusion pipeline
-1. Convert directional signals to scores:
-   - `buy=+1`, `hold=0`, `sell=-1`
-2. Multiply by each agent confidence.
-3. Directional fusion:
-   - `combined_score = 0.60*tech_score + 0.40*sentiment_score`
-4. Risk adjustment multiplier:
-   - `low_risk=1.10`, `medium_risk=1.00`, `high_risk=0.65`
-5. Clamp adjusted score to `[-1, +1]`.
-6. Decision thresholds:
-   - high risk and strong buy -> can be forced to `hold` (conservative gate)
-   - `>= 0.25` -> `buy`
-   - `<= -0.25` -> `sell`
-   - otherwise `hold`
-7. Final confidence:
-   - `abs(adjusted_score) + 0.15*risk_confidence` (capped at 1.0)
-
-### 7.4 Explainability
-Coordinator output includes:
-- final signal
-- confidence
-- risk level
-- key factors from all agents
-- combined reasoning paragraph with each agent's rationale
-
-## 8. How the Final Result Is Obtained (End-to-End)
-1. Raw inputs are collected in each specialized domain.
-2. Each agent transforms raw data into normalized scores and confidence values.
-3. Coordinator performs weighted directional fusion (technical + sentiment).
-4. Risk regime modifies directional conviction.
-5. Threshold logic maps numeric conviction to discrete signal (`buy/sell/hold`).
-6. Human-readable reasoning is generated from component explanations.
-
-In short:
-- Agent 1 and Agent 2 propose direction.
-- Agent 3 controls aggression level.
-- Agent 4 decides final action.
-
-## 9. What Affects the Result Most
-### 9.1 Primary drivers
-- Technical model probabilities (`trade_prob`, `long_prob`)
-- Sentiment channel balance (news/social/macro)
-- Risk multiplier from Agent 3
-
-### 9.2 Sensitivity points
-- Thresholds (`0.55`, `0.5`, `+-0.3`, `+-0.25`, risk thresholds)
-- API data quality and recency
-- Feature schema compatibility for Agent 1
-- Event labeling quality for geopolitical scoring
-
-### 9.3 Inter-agent influence examples
-- If Agent 1 says `buy` with high confidence and Agent 2 says `hold`, final score may still be buy-leaning due to technical 60% weight.
-- If both Agent 1 and Agent 2 are bullish but Agent 3 outputs `high_risk`, coordinator dampens confidence and may downgrade to `hold`.
-- If sentiment turns strongly negative while technical is weak-positive, final output can move to neutral/hold or sell depending on confidence values.
-
-## 10. Real Data vs Mock Data Behavior
-The system is designed for graceful degradation:
-- Missing API keys do not crash the pipeline.
-- Agents return fallback/mock-based outputs so coordinator can still run.
-- This is useful for demos, development, and presentation stability.
-
-Practical interpretation:
-- Real API mode gives better realism.
-- Mock mode gives reproducibility and reliability when external services fail.
-
-## 11. Reliability, Error Handling, and Safety Defaults
-- Agent-level try/except blocks return safe defaults (`hold` or `medium_risk`) on failure.
-- Coordinator validates subprocess return code and JSON payload extraction.
-- Fallback behavior prevents total system failure when one source is down.
-
-This is important for production-style robustness and for classroom demonstrations.
-
-## 12. Current Limitations
-1. Fusion weights are heuristic and not yet fully calibrated by large-scale backtesting.
-2. External APIs can be rate-limited and sometimes paid on advanced tiers.
-3. Social/geopolitical text can include noise and interpretation bias.
-4. Agent 1 checkpoint expectations require strict feature compatibility.
-
-## 13. Validation and Evaluation Strategy
-Current validation style:
-- Unit-level/agent-level execution checks
-- Smoke test flow through coordinator
-- Reasoning inspection for explainability consistency
-
-Recommended next evaluation layer:
-1. Historical backtest with synchronized snapshots from all agents.
-2. Ablation studies (remove one agent at a time).
-3. Threshold and weight calibration on validation windows.
-4. Regime-specific analysis (high-volatility vs calm periods).
-
-## 14. Why Multi-Agent Was a Good Design Choice
-- Better separation of concerns than one giant model.
-- Easier team collaboration (parallel development per agent).
-- Easier debugging (identify which agent caused drift).
-- Better explainability for academic evaluation.
-- Better extensibility for future data sources or model upgrades.
-
-## 15. Conclusion
-This project demonstrates a practical, explainable, and modular multi-agent architecture for Bitcoin trading decision support.
-
-Final decision quality emerges from **complementarity**:
-- Agent 1 contributes quantitative market structure,
-- Agent 2 contributes NLP and macro narrative context,
-- Agent 3 contributes regime-risk control,
-- Agent 4 integrates all three into a final actionable signal.
-
-The result is a system that is more robust and interpretable than any single-source approach, while remaining flexible for future upgrades and team integration.
+# Multi-Agent Bitcoin Trading Intelligence System — Project Report
 
 ---
 
-## Appendix A - Key Project Paths
+## 1. Executive Overview
+
+This document is a technical report for the Multi-Agent Bitcoin Trading Intelligence System. The system is built as a set of independent, specialized agents whose outputs are fused by a coordinator to produce an explainable trading decision (`BUY/SELL/HOLD`). The goal is to improve interpretability and robustness by separating concerns: quantitative market structure, narrative/sentiment context, and regime risk are handled by distinct modules that are easier to develop, test and maintain.
+
+At a glance:
+
+- **Agent 1:** technical market-structure (price + engineered features)
+- **Agent 2:** sentiment and macro narrative (news, X/Twitter, macro indicators)
+- **Agent 3:** risk and volatility (on-chain metrics, geopolitical events)
+- **Agent 4:** coordinator that fuses the three agents and produces the final explainable signal
+
+---
+
+## 2. Project Goals
+
+The system is designed to produce an explainable trading signal while combining heterogeneous inputs (price, text, macro, blockchain, events). Modularity is a primary design principle so each team member can develop and test an agent independently. The implementation supports both real-data operation and fallback/mock-mode to guarantee stable demonstrations and development reproducibility.
+
+---
+
+## 3. System Architecture
+
+### 3.1 High-level flow
+
+The runtime flow is straight-forward: each agent ingests domain-specific inputs, computes a normalized numeric score and a confidence, and returns a JSON-like payload. The coordinator then combines these payloads to produce the final trading decision.
+
+1. `Agent 1 (Technical)` performs inference with pretrained models using `bitcoin-predictor-dev/data/processed/features_1h.parquet`.
+2. `Agent 2 (Sentiment + Macro)` gathers news, monitored X/Twitter feeds and macro indicators to create a directional narrative score.
+3. `Agent 3 (Risk + Volatility)` computes a regime score from on-chain metrics and geopolitical event signals.
+4. `Agent 4 (Coordinator)` fuses directional conviction from Agents 1 and 2, and then modulates the result using Agent 3's risk state to obtain the final, explainable signal.
+
+### 3.2 Modularity principle
+
+Agents are intentionally isolated to simplify development and dependency management. The repository contains distinct folders for each agent (`coordinator_agent/`, `sentiment_analysis/`, `agent_risk/`) and the coordinator may call Agents 2 and 3 via `run_agent_json.py` subprocess bridges. This reduces cross-import issues and enforces clear I/O contracts based on JSON.
+
+<div style="margin-top: 20px; margin-bottom: 6px;">
+<img src="assets/modularity_principle.png" width="700px" alt="Modularity principle diagram">
+</div>
+<p style="color:#555; font-size:0.9em; margin-top:4px;"><em>Figure: Modularity principle — agent isolation and JSON-based I/O contracts.</em></p>
+
+---
+
+<div style="page-break-after: always;"></div>
+
+## 4. Agent 1 — Technical Analysis
+
+Agent 1 is the quantitative market-structure module and the most direct signal of short-to-medium term price behavior. It uses pretrained models included in `bitcoin-predictor-dev` and performs inference on the latest feature window.
+
+**Inputs**
+The agent loads two checkpoints from `bitcoin-predictor-dev/src/models` (trade and direction models) and reads recent feature frames from `bitcoin-predictor-dev/data/processed/features_1h.parquet`.
+
+**Method**
+The pipeline reconstructs the expected input dimensions from checkpoint metadata, builds a sliding window (default 60 rows), normalizes features using stored preprocessing parameters, and runs two models:
+
+- Trade model — binary: is a trade justified?
+- Direction model — conditional: if trade is justified, probability of long vs short
+
+**Decision logic and confidence**
+The agent maps model outputs to discrete labels using clear thresholds:
+
+<table style="border-collapse:collapse; width:100%; max-width:720px; margin: 16px 0;">
+  <thead>
+    <tr style="background:#0b6cff; color:#fff; text-align:left;">
+      <th style="padding:8px; border:1px solid #ddd;">Condition</th>
+      <th style="padding:8px; border:1px solid #ddd;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">trade_prob &lt; 0.55</td><td style="padding:8px; border:1px solid #ddd;">hold</td></tr>
+    <tr><td style="padding:8px; border:1px solid #ddd;">trade_prob &ge; 0.55 and long_prob &ge; 0.5</td><td style="padding:8px; border:1px solid #ddd;">buy</td></tr>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">trade_prob &ge; 0.55 and long_prob &lt; 0.5</td><td style="padding:8px; border:1px solid #ddd;">sell</td></tr>
+  </tbody>
+</table>
+
+Confidence computation:
+
+- hold: `1 - trade_prob`
+- buy/sell: `trade_prob * max(long_prob, 1 - long_prob)`
+
+**Role in fusion**
+Because this agent is trained on direct market patterns, coordinator fusion gives it a higher base weight (60%) when combining directional conviction.
+
+<div style="margin-top: 24px; margin-bottom: 6px;">
+<img src="assets/technical_pipeline.png" width="700px" alt="Technical pipeline diagram">
+</div>
+<p style="color:#555; font-size:0.9em; margin-top:4px;"><em>Figure: Technical pipeline — feature extraction from OHLCV, sliding-window assembly, normalization and dual-model inference (trade + direction).</em></p>
+
+---
+
+<div style="page-break-after: always;"></div>
+
+## 5. Agent 2 — Sentiment and Macro Analysis
+
+Agent 2 combines NLP-derived narrative signals with macroeconomic indicators to detect directional pressure that is not visible in price series alone.
+
+**Inputs**
+News (NewsAPI or fallback mock), monitored X/Twitter feeds (configurable account lists; mock fallback supported), macro indicators (Alpha Vantage when available, otherwise simulated), and market context (CoinGecko price snapshot).
+
+**Text processing and scoring**
+The agent uses `ProsusAI/finbert` for sentence-level financial sentiment. For each text item the model returns class probabilities; the per-item sentiment score is computed as `positive_prob - negative_prob` and its confidence is `max_class_prob`. When the model is unavailable or fails, a lightweight keyword-based fallback is used.
+
+**Time weighting and aggregation**
+Each item's contribution is time-decayed so that recent items have higher influence. A relevance weight is computed as `relevance = decay_function(age_hours) * confidence`. The aggregate channel score is a weighted average:
+
+```
+avg_sentiment = sum(sentiment_i * relevance_i) / sum(relevance_i)
+```
+
+**Channel fusion and thresholds**
+Agent 2 fuses three channels with fixed weights:
+
+<table style="border-collapse:collapse; width:100%; max-width:640px; margin: 16px 0;">
+  <thead>
+    <tr style="background:#0b6cff; color:#fff;"><th style="padding:8px; border:1px solid #ddd;">Channel</th><th style="padding:8px; border:1px solid #ddd;">Weight</th></tr>
+  </thead>
+  <tbody>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">News</td><td style="padding:8px; border:1px solid #ddd; text-align:right;">0.40</td></tr>
+    <tr><td style="padding:8px; border:1px solid #ddd;">Twitter/X</td><td style="padding:8px; border:1px solid #ddd; text-align:right;">0.30</td></tr>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">Macro indicators</td><td style="padding:8px; border:1px solid #ddd; text-align:right;">0.30</td></tr>
+  </tbody>
+</table>
+
+Combined-score mapping:
+
+<table style="border-collapse:collapse; width:60%; max-width:480px; margin: 16px 0;">
+  <thead>
+    <tr style="background:#222; color:#fff;"><th style="padding:8px; border:1px solid #ddd;">combined_score</th><th style="padding:8px; border:1px solid #ddd;">label</th></tr>
+  </thead>
+  <tbody>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">&gt; +0.30</td><td style="padding:8px; border:1px solid #ddd;">buy</td></tr>
+    <tr><td style="padding:8px; border:1px solid #ddd;">&lt; -0.30</td><td style="padding:8px; border:1px solid #ddd;">sell</td></tr>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">otherwise</td><td style="padding:8px; border:1px solid #ddd;">hold</td></tr>
+  </tbody>
+</table>
+
+**Visual explanation**
+The figure below illustrates how individual article and tweet scores are weighted by recency and confidence, then combined into per-channel averages and fused into the final `combined_score`.
+
+<div style="margin-top: 24px; margin-bottom: 6px;">
+<img src="assets/sentiment_pipeline.png" width="700px" alt="Sentiment pipeline diagram">
+</div>
+<p style="color:#555; font-size:0.9em; margin-top:4px;"><em>Figure: Sentiment pipeline — per-item scoring, time decay, channel aggregation and channel fusion.</em></p>
+
+---
+
+<div style="page-break-after: always;"></div>
+
+## 6. Agent 3 — Risk and Volatility Analysis
+
+Agent 3 evaluates market regimes and instability indicators and therefore acts as a safety layer. It does not directly predict direction; rather it provides a multiplier that increases or reduces coordinator aggression.
+
+**Inputs and pre-processing**
+Typical on-chain signals include exchange inflows/outflows, active addresses, large transfers (whale activity), and hash-rate/mempool state. Geopolitical input is event-based (war, sanctions, political instability) and is mapped to a simple numeric stress value.
+
+**Scoring and thresholds**
+Agent 3 combines normalized on-chain and geopolitical stress signals:
+
+<div style="max-width:720px; margin: 16px 0;">
+<pre style="background:#f6f8fb; padding:10px; border-left:4px solid #0b6cff; overflow:auto;">combined_risk = 0.60 * onchain_risk + 0.40 * geopolitical_risk
+(each component normalized to [0,1])</pre>
+</div>
+
+Risk label mapping:
+
+<table style="border-collapse:collapse; width:60%; max-width:480px; margin: 16px 0;">
+  <thead>
+    <tr style="background:#0b6cff; color:#fff;"><th style="padding:8px; border:1px solid #ddd;">combined_risk</th><th style="padding:8px; border:1px solid #ddd;">label</th></tr>
+  </thead>
+  <tbody>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">&lt; 0.30</td><td style="padding:8px; border:1px solid #ddd;">low_risk</td></tr>
+    <tr><td style="padding:8px; border:1px solid #ddd;">0.30 – 0.70</td><td style="padding:8px; border:1px solid #ddd;">medium_risk</td></tr>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">&gt; 0.70</td><td style="padding:8px; border:1px solid #ddd;">high_risk</td></tr>
+  </tbody>
+</table>
+
+<div style="margin-top: 24px; margin-bottom: 6px;">
+<img src="assets/risk_pipeline.png" width="700px" alt="Risk pipeline diagram">
+</div>
+<p style="color:#555; font-size:0.9em; margin-top:4px;"><em>Figure: Risk pipeline — normalisation of on-chain signals and encoding of geopolitical events, combined into a regime score.</em></p>
+
+**Confidence**
+Agent confidence scales with data coverage (on-chain metrics completeness and event metadata richness). The final coordinator uses risk confidence to temper how strongly the risk multiplier is applied.
+
+**Why it matters**
+The coordinator uses Agent 3 to avoid trading during dangerous regimes. For example, a strong buy signal from Agents 1 and 2 can be dampened or gated to `hold` if Agent 3 reports `high_risk`.
+
+---
+
+<div style="page-break-after: always;"></div>
+
+## 7. Agent 4 — Coordinator and Final Decision
+
+The coordinator ingests standardized payloads from all agents, performs a weighted fusion of directional conviction, applies a risk-based multiplier, and produces an explainable output.
+
+**Integration pattern**
+`Agent 1` is typically invoked directly in-process (`TechnicalAgent.run()`), while `Agent 2` and `Agent 3` are invoked through `run_agent_json.py` subprocess wrappers to preserve dependency isolation.
+
+**Fusion algorithm**
+
+1. Map labels to numeric scores: `buy=+1`, `hold=0`, `sell=-1`.
+2. Multiply each numeric score by the respective agent confidence.
+3. Compute directional fusion: `combined_score = 0.60 * tech_score + 0.40 * sentiment_score`.
+4. Apply risk multiplier based on Agent 3 label:
+
+<table style="border-collapse:collapse; width:420px; margin: 16px 0;">
+  <thead>
+    <tr style="background:#0b6cff; color:#fff;"><th style="padding:8px; border:1px solid #ddd;">risk label</th><th style="padding:8px; border:1px solid #ddd;">multiplier</th></tr>
+  </thead>
+  <tbody>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">low_risk</td><td style="padding:8px; border:1px solid #ddd; text-align:right;">1.10</td></tr>
+    <tr><td style="padding:8px; border:1px solid #ddd;">medium_risk</td><td style="padding:8px; border:1px solid #ddd; text-align:right;">1.00</td></tr>
+    <tr style="background:#f7fbff;"><td style="padding:8px; border:1px solid #ddd;">high_risk</td><td style="padding:8px; border:1px solid #ddd; text-align:right;">0.65</td></tr>
+  </tbody>
+</table>
+
+5. Clamp the adjusted score to `[-1, +1]`.
+6. Convert numeric score to discrete action:
+   - `adjusted_score >= +0.25` → **BUY**
+   - `adjusted_score <= -0.25` → **SELL**
+   - otherwise → **HOLD**
+
+Final confidence is computed as `min(1.0, abs(adjusted_score) + 0.15 * risk_confidence)` and the coordinator returns a human-readable reasoning paragraph and key factor summary to aid explainability.
+
+<div style="margin-top: 24px; margin-bottom: 6px;">
+<img src="assets/multi-agent_flow.png" width="700px" alt="Multi-agent flow diagram">
+</div>
+<p style="color:#555; font-size:0.9em; margin-top:4px;"><em>Figure: Multi-agent flow — end-to-end signal fusion across all four agents.</em></p>
+
+---
+
+<div style="page-break-after: always;"></div>
+
+## 8. How the Final Result is Obtained — End-to-End
+
+The pipeline follows a simple contract: each agent returns a JSON-like payload `{label, score, confidence, details}`. The coordinator consumes these payloads and performs the fusion steps described above. The final output contains the discrete action, a numeric conviction, the risk label and a short natural-language explanation assembled from the `details` fields provided by agents.
+
+**Summary flow:**
+
+- Agents convert raw inputs to normalized scores and confidences.
+- Coordinator fuses directional agents, then modulates by risk.
+- Thresholds map the numeric result to `BUY/SELL/HOLD` and the reportable confidence.
+
+---
+
+## 9. What Affects the Result Most
+
+Primary drivers are the technical model probabilities, the balance of sentiment channels, and the risk multiplier. The fusion thresholds and agent weights are sensitive parameters — small changes can flip marginal cases.
+
+**Sensitivity checklist:**
+
+- hard-coded thresholds (`trade_prob`, `long_prob`, `combined_score` cutoffs)
+- freshness and completeness of API feeds (news, macro, on-chain)
+- feature alignment for Agent 1 (preprocessing must match checkpoint expectations)
+- quality of event labeling for geopolitical inputs
+
+**Examples of inter-agent influence:**
+
+- A high-confidence `buy` from Agent 1 combined with neutral sentiment will likely stay `buy` because technical weight is 60%.
+- Strong negative narrative from Agent 2 can overcome weak technical bullish signals and push the coordinator toward `hold` or `sell`.
+- Agent 3 can force a conservative gate: `high_risk` may reduce an otherwise strong buy to `hold` to avoid exposure.
+
+---
+
+## 10. Real Data vs Mock Data Behaviour
+
+The codebase supports a dual-mode operation: real-data mode (uses NewsAPI, AlphaVantage, Twitter/X) and mock-mode (controlled, repeatable fake data). Mock-mode guarantees reproducible demos and protects the pipeline from external API rate limits or missing credentials. For final evaluation and live operation, real-data mode is recommended — but note that some APIs have paid tiers and rate limits.
+
+---
+
+## 11. Reliability, Error Handling and Safety Defaults
+
+Each agent implements defensive programming patterns. On exceptions the agent returns safe defaults (`hold` for direction, `medium_risk` for risk) and includes an `error` field in the details. The coordinator validates subprocess exit codes and JSON payloads, and will use defaults if a payload is missing or malformed. These behaviors are critical for stable demonstrations and for initial integration testing.
+
+---
+
+<div style="page-break-after: always;"></div>
+
+## 12. Current Limitations
+
+The main limitations are:
+
+1. Fusion weights are heuristic and require systematic calibration via backtesting.
+2. External API availability and rate limits — advanced features of NewsAPI/AlphaVantage/Twitter may be paid.
+3. NLP and event extraction can be noisy; noisy labels lead to biased narrative scores.
+4. Agent 1 depends on exact feature schema compatibility with the pretrained checkpoints.
+
+---
+
+## 13. Validation and Evaluation Strategy
+
+We currently run unit-level checks and end-to-end smoke tests. For a rigorous evaluation we recommend:
+
+1. Historical backtest where snapshots of news/X/macro/on-chain at each historical timestamp are synchronized so each agent sees only past information.
+2. Ablation experiments: remove or silence an agent and measure performance delta.
+3. Grid search or Bayesian optimization over fusion weights and thresholds using walk-forward validation.
+4. Regime-specific performance analysis (high volatility, low liquidity, geopolitical stress).
+
+---
+
+## 14. Why Multi-Agent is a Good Design Choice
+
+Modularity enables clearer ownership, easier debugging and explainability. Agents can be upgraded independently and new data sources can be added without retraining a single monolithic model.
+
+---
+
+## 15. Conclusion
+
+The project implements a practical, explainable multi-agent architecture where quantitative, narrative and regime signals combine to produce robust trading support. Agent specialization encourages focused validation and clearer explanations of why a trade was recommended.
+
+**Key takeaway:** the final decision quality depends on complementary signals — technical patterns (Agent 1), narrative pressure (Agent 2) and conservative gating by the risk module (Agent 3) — all merged by a transparent coordinator.
+
+---
+
+<div style="page-break-after: always;"></div>
+
+## Appendix A — Key Project Paths
+
 - `bitcoin-predictor-dev/src/models/direction/best_model.pt`
 - `bitcoin-predictor-dev/src/models/trade/best_model.pt`
 - `bitcoin-predictor-dev/data/processed/features_1h.parquet`
@@ -268,9 +327,53 @@ The result is a system that is more robust and interpretable than any single-sou
 - `coordinator_agent/technical_agent.py`
 - `coordinator_agent/coordinator_agent.py`
 
-## Appendix B - Related Presentation Files
+---
+
+## Appendix B — Related Presentation Files
+
 - `Presentation/01_Agent1_Technical_Analysis.md`
 - `Presentation/02_Agent2_Sentiment_Macro.md`
 - `Presentation/03_Agent3_Risk_Volatility.md`
 - `Presentation/04_Agent4_Coordinator.md`
 
+---
+
+<div style="page-break-after: always;"></div>
+
+## Appendix C — Sample Analysis Graphs
+
+### 1) Sentiment time-series (news + Twitter combined)
+
+<div style="margin-top: 20px; margin-bottom: 6px;">
+<img src="assets/sentiment_timeseries.png" width="700px" alt="Sentiment time-series plot">
+</div>
+
+**What this plot shows**
+This time-series plot overlays the aggregated News sentiment and Twitter sentiment channels over a selectable period (hourly aggregation in the sample). The dashed horizontal lines mark the `+0.30` and `-0.30` thresholds used by Agent 2 to translate numeric combined scores into `buy` / `sell` decisions. Observing how channels cross thresholds (and whether crossings are sustained) helps you judge whether narrative pressure supports a trade or is merely a short spike.
+
+**Why it matters**
+
+- Confirms whether narrative momentum is transient or persistent
+- Helps correlate narrative shifts with price moves (when used alongside Agent 1 outputs)
+
+**How it is produced**
+The plotted series are produced by per-item sentiment scoring (FinBERT outputs) followed by time decay weighting and hourly aggregation. See Appendix C code snippet 1 for the exact resampling and plotting steps.
+
+---
+
+### 2) Risk heatmap (on-chain metrics over time)
+
+<div style="margin-top: 20px; margin-bottom: 6px;">
+<img src="assets/onchain_heatmap.png" width="700px" alt="On-chain metrics heatmap">
+</div>
+
+**What this plot shows**
+The heatmap displays several normalized on-chain metrics (for example: exchange inflows, active addresses, large transfers) on the vertical axis and time on the horizontal axis. Color intensity corresponds to normalized metric magnitude. Synchronous spikes across multiple metrics signal regime stress that typically raises the `combined_risk` value.
+
+**Why it matters**
+
+- Allows quick visual detection of co-movement in on-chain stress signals
+- Visualises when multiple risk indicators align, which often precedes volatility spikes
+
+**How it is produced**
+Each raw metric is normalized (e.g., min-max or z-score), resampled to 6-hour bins and then arranged as a matrix for the heatmap. The plotting snippet in Appendix C snippet 2 reproduces this process (using `seaborn.heatmap`).
