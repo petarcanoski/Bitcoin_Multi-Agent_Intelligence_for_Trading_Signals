@@ -6,6 +6,7 @@ from config import Config
 from models import SignalOutput, NewsItem, MacroIndicator
 from api_clients import NewsAPIClient, MacroDataClient, CryptoMarketClient, TwitterClient
 from sentiment_analyzer import SentimentAnalyzer
+from llm_reasoning import generate_llm_reasoning
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -97,12 +98,26 @@ class SentimentAgent:
             signal = 'hold'
 
         # Build reasoning
-        reasoning = self._generate_reasoning(
+        basic_reasoning = self._generate_reasoning(
             signal, news_score, twitter_score, macro_score, combined_score,
             news_sentiment.get('count', 0),
             twitter_sentiment.get('count', 0),
             macro_analysis.get('count', 0),
             market_context
+        )
+        
+        # Enhance with LLM reasoning (falls back to basic if unavailable)
+        reasoning = generate_llm_reasoning(
+            signal=signal,
+            combined_score=combined_score,
+            news_score=news_score,
+            twitter_score=twitter_score,
+            macro_score=macro_score,
+            news_count=news_sentiment.get('count', 0),
+            twitter_count=twitter_sentiment.get('count', 0),
+            macro_count=macro_analysis.get('count', 0),
+            fallback_reasoning=basic_reasoning,
+            market_context=market_context
         )
 
         # Identify key factors

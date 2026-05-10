@@ -1,3 +1,8 @@
+try:
+    import env_loader
+except Exception:
+    print("Warning: env_loader failed to import. Make sure .env file is present and env_loader.py is in the path.")
+
 from sentiment_agent import SentimentAgent
 
 
@@ -5,7 +10,6 @@ def main():
     print(" Starting Bitcoin Sentiment Analysis Agent")
     print("=" * 70)
 
-    # Create and run the sentiment agent
     agent = SentimentAgent()
     signal = agent.run(days_back=3)
 
@@ -28,13 +32,12 @@ def main():
     print(f"   {signal.reasoning}")
 
     print(f"\n Timestamp: {signal.timestamp.strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"📡 Data Sources: {', '.join(signal.data_sources)}")
+    print(f" Data Sources: {', '.join(signal.data_sources)}")
 
     print("\n" + "=" * 70)
     print(" Analysis Complete!")
     print("=" * 70)
 
-    # Return signal for potential integration with other agents
     return signal
 
 

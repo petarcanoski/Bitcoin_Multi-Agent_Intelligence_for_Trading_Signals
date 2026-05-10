@@ -1,3 +1,8 @@
+try:
+    import env_loader
+except Exception:
+    print("Warning: env_loader failed to import. Make sure .env file is present and env_loader.py is in the path.")
+
 from risk_agent import RiskAgent
 
 
@@ -43,17 +48,15 @@ def main():
     print(" Analysis Complete!")
     print("=" * 70)
 
-    # Optional: Show detailed metrics
     print(f"\n Detailed On-Chain Metrics ({len(signal.onchain_metrics)}):")
     for metric in signal.onchain_metrics:
         print(f"   • {metric.metric_type}: {metric.value:,.0f} (risk: {metric.risk_level})")
 
     print(f"\n Geopolitical Events ({len(signal.geopolitical_events)}):")
-    for event in signal.geopolitical_events[:5]:  # Show top 5
+    for event in signal.geopolitical_events[:5]:
         print(f"   • [{event.severity.upper()}] {event.title[:60]}...")
         print(f"     Region: {event.region}, Impact: {event.impact_on_crypto}")
 
-    # Export as JSON for coordinator agent
     print(f"\n JSON Output for Coordinator:")
     print(signal.model_dump_json(indent=2))
 

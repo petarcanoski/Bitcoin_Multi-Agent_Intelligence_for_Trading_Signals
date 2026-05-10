@@ -1,6 +1,8 @@
 import json
+import os
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -25,12 +27,17 @@ class CoordinatorAgent:
         return mapping.get(signal.lower(), 0)
 
     def _run_json_script(self, cwd: Path, script_name: str) -> Dict:
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
         completed = subprocess.run(
             [sys.executable, script_name],
             cwd=str(cwd),
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             check=False,
+            env=env,
         )
 
         if completed.returncode != 0:
@@ -38,12 +45,79 @@ class CoordinatorAgent:
                 f"{script_name} failed with code {completed.returncode}. stderr={completed.stderr.strip()}"
             )
 
-        lines = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+        stdout_text = completed.stdout or ""
+        lines = [line.strip() for line in stdout_text.splitlines() if line.strip()]
         for line in reversed(lines):
             if line.startswith("{") and line.endswith("}"):
                 return json.loads(line)
 
         raise RuntimeError(f"No JSON payload found in output of {script_name}.")
+
+    @staticmethod
+    def _signal_to_unit(signal: str) -> float:
+        return float({"buy": 1.0, "hold": 0.0, "sell": -1.0}.get(str(signal).lower(), 0.0))
+
+    def _build_agentic_case(self, technical: Dict, sentiment: Dict, risk: Dict) -> Dict:
+        # Convert existing agent outputs to the feature schema expected by agentic_prototype.
+        trend_strength = 2.0 * (float(technical.get("long_probability", 0.5)) - 0.5)
+        narrative = " ".join(sentiment.get("key_factors", []))
+        return {
+            "id": f"live-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+            "technical_momentum": self._signal_to_unit(technical.get("signal", "hold")) * float(technical.get("confidence", 0.0)),
+            "trend_strength": trend_strength,
+            "volatility": float(risk.get("volatility_score", risk.get("risk_score", 0.5))),
+            "news_sentiment": float(sentiment.get("news_sentiment", sentiment.get("sentiment_score", 0.0))),
+            "social_sentiment": float(sentiment.get("twitter_sentiment", 0.0)),
+            "macro_sentiment": float(sentiment.get("macro_score", 0.0)),
+            "onchain_risk": float(risk.get("onchain_risk", risk.get("risk_score", 0.5))),
+            "geopolitical_risk": float(risk.get("geopolitical_risk", risk.get("risk_score", 0.5))),
+            "narrative": narrative,
+        }
+
+    def _run_agentic(self, technical: Dict, sentiment: Dict, risk: Dict) -> FinalCoordinatorSignal:
+        try:
+            from agentic_prototype.workflow import run_case
+        except ImportError as exc:
+            if str(self.repo_root) not in sys.path:
+                sys.path.insert(0, str(self.repo_root))
+            try:
+                from agentic_prototype.workflow import run_case
+            except ImportError as nested_exc:
+                raise RuntimeError(
+                    "Agentic mode requires the 'agentic_prototype' package in the repository root."
+                ) from nested_exc
+
+        case = self._build_agentic_case(technical, sentiment, risk)
+        prediction = run_case(case)
+        risk_level = str(risk.get("signal", "medium_risk")).lower()
+
+        key_factors = [
+            f"Technical: {technical['signal'].upper()} ({technical['confidence']:.2f})",
+            f"Sentiment: {sentiment.get('signal', 'hold').upper()} ({float(sentiment.get('confidence', 0.0)):.2f})",
+            f"Risk: {risk_level.upper()} ({float(risk.get('risk_score', 0.5)):.2f})",
+            "Fusion: Agentic skill-based LangGraph workflow",
+        ]
+        reasoning = (
+            f"Agentic coordinator output score {prediction['predicted_score']:+.2f} with signal "
+            f"{prediction['predicted_signal'].upper()} and confidence {prediction['predicted_confidence']:.2f}. "
+            f"Workflow reasoning: {prediction['reasoning']} Technical reason: {technical['reasoning']} "
+            f"Sentiment reason: {sentiment.get('reasoning', 'N/A')} Risk reason: {risk.get('reasoning', 'N/A')}"
+        )
+
+        return FinalCoordinatorSignal(
+            signal=prediction["predicted_signal"],
+            confidence=float(prediction["predicted_confidence"]),
+            score=float(prediction["predicted_score"]),
+            risk_level=risk_level,
+            key_factors=key_factors,
+            reasoning=reasoning,
+            data_sources=[
+                "bitcoin-predictor-dev models",
+                "sentiment_analysis",
+                "agent_risk",
+                "agentic_prototype LangGraph",
+            ],
+        )
 
     def _combine_signals(self, technical: Dict, sentiment: Dict, risk: Dict) -> Tuple[str, float, float, str]:
         tech_score = self._signal_to_score(technical["signal"]) * float(technical.get("confidence", 0.0))
@@ -74,10 +148,15 @@ class CoordinatorAgent:
         confidence = min(1.0, abs(adjusted_score) + 0.15 * float(risk.get("confidence", 0.0)))
         return final_signal, confidence, adjusted_score, risk_signal
 
-    def run(self) -> FinalCoordinatorSignal:
+    def run(self, mode: str = "agentic") -> FinalCoordinatorSignal:
         technical = self.technical_agent.run().model_dump()
         sentiment = self._run_json_script(self.sentiment_dir, "run_agent_json.py")
         risk = self._run_json_script(self.risk_dir, "run_agent_json.py")
+
+        if mode.lower() == "agentic":
+            return self._run_agentic(technical, sentiment, risk)
+        if mode.lower() != "legacy":
+            raise ValueError("Unsupported coordinator mode. Use 'agentic' or 'legacy'.")
 
         signal, confidence, score, risk_level = self._combine_signals(technical, sentiment, risk)
 

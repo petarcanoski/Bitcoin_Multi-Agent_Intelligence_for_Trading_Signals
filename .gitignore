@@ -1,10 +1,13 @@
+# Top-level .gitignore for the whole project - consolidated from submodules
 
+# Keep docs at root tracked
 /*.md
 !/README.md
 
-
+# Python caches and build artifacts
 __pycache__/
 *.py[cod]
+*$py.class
 *.pyd
 *.pyo
 *.so
@@ -38,5 +41,24 @@ Thumbs.db
 # Pip
 pip-wheel-metadata/
 
+# Environment files (managed centrally at project root)
+.env
+.env.example
+
+# Cache and model folders
+.cache/
+transformers_cache/
+models/
+*.cache
+
+# Logs and test outputs
+*.log
+test_output/
+
+# SQLite cache
 sentiment_agent_cache.sqlite
 
+# Project-specific
+./sentiment_agent_cache.sqlite
+
+md
