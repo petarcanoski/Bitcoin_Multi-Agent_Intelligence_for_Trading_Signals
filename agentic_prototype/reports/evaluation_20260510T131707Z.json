@@ -1,0 +1,134 @@
+{
+  "total_cases": 12,
+  "correct": 11,
+  "accuracy": 0.9167,
+  "confusion_matrix": {
+    "buy": {
+      "buy": 5,
+      "hold": 0,
+      "sell": 0
+    },
+    "hold": {
+      "buy": 0,
+      "hold": 3,
+      "sell": 0
+    },
+    "sell": {
+      "buy": 0,
+      "hold": 1,
+      "sell": 3
+    }
+  },
+  "per_class": {
+    "buy": {
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "hold": {
+      "precision": 0.75,
+      "recall": 1.0
+    },
+    "sell": {
+      "precision": 1.0,
+      "recall": 0.75
+    }
+  },
+  "predictions": [
+    {
+      "id": "c01",
+      "predicted_signal": "buy",
+      "predicted_score": 0.5747,
+      "predicted_confidence": 0.6948,
+      "reasoning": "Coordinator Agent computed score +0.57 -> BUY. Factors: technical=+0.61; sentiment=+0.61; risk=+0.42.",
+      "expected_signal": "buy"
+    },
+    {
+      "id": "c02",
+      "predicted_signal": "buy",
+      "predicted_score": 0.4515,
+      "predicted_confidence": 0.6209,
+      "reasoning": "Coordinator Agent computed score +0.45 -> BUY. Factors: technical=+0.50; sentiment=+0.44; risk=+0.35.",
+      "expected_signal": "buy"
+    },
+    {
+      "id": "c03",
+      "predicted_signal": "sell",
+      "predicted_score": -0.5705,
+      "predicted_confidence": 0.6923,
+      "reasoning": "Coordinator Agent computed score -0.57 -> SELL. Factors: technical=-0.63; sentiment=-0.54; risk=-0.50.",
+      "expected_signal": "sell"
+    },
+    {
+      "id": "c04",
+      "predicted_signal": "sell",
+      "predicted_score": -0.4077,
+      "predicted_confidence": 0.5946,
+      "reasoning": "Coordinator Agent computed score -0.41 -> SELL. Factors: technical=-0.46; sentiment=-0.36; risk=-0.36.",
+      "expected_signal": "sell"
+    },
+    {
+      "id": "c05",
+      "predicted_signal": "hold",
+      "predicted_score": 0.0948,
+      "predicted_confidence": 0.4069,
+      "reasoning": "Coordinator Agent computed score +0.09 -> HOLD. Factors: technical=+0.10; sentiment=+0.09; risk=+0.08.",
+      "expected_signal": "hold"
+    },
+    {
+      "id": "c06",
+      "predicted_signal": "hold",
+      "predicted_score": -0.0287,
+      "predicted_confidence": 0.3672,
+      "reasoning": "Coordinator Agent computed score -0.03 -> HOLD. Factors: technical=-0.03; sentiment=-0.02; risk=-0.03.",
+      "expected_signal": "hold"
+    },
+    {
+      "id": "c07",
+      "predicted_signal": "buy",
+      "predicted_score": 0.2659,
+      "predicted_confidence": 0.5623,
+      "reasoning": "Coordinator Agent computed score +0.27 -> BUY. Factors: technical=+0.43; sentiment=+0.33; risk=-0.22.",
+      "expected_signal": "buy"
+    },
+    {
+      "id": "c08",
+      "predicted_signal": "sell",
+      "predicted_score": -0.2813,
+      "predicted_confidence": 0.5188,
+      "reasoning": "Coordinator Agent computed score -0.28 -> SELL. Factors: technical=-0.39; sentiment=-0.24; risk=-0.11.",
+      "expected_signal": "sell"
+    },
+    {
+      "id": "c09",
+      "predicted_signal": "buy",
+      "predicted_score": 0.2673,
+      "predicted_confidence": 0.5104,
+      "reasoning": "Coordinator Agent computed score +0.27 -> BUY. Factors: technical=+0.29; sentiment=+0.24; risk=+0.26.",
+      "expected_signal": "buy"
+    },
+    {
+      "id": "c10",
+      "predicted_signal": "hold",
+      "predicted_score": -0.1807,
+      "predicted_confidence": 0.4584,
+      "reasoning": "Coordinator Agent computed score -0.18 -> HOLD. Factors: technical=-0.24; sentiment=-0.16; risk=-0.08.",
+      "expected_signal": "sell"
+    },
+    {
+      "id": "c11",
+      "predicted_signal": "hold",
+      "predicted_score": 0.0274,
+      "predicted_confidence": 0.3665,
+      "reasoning": "Coordinator Agent computed score +0.03 -> HOLD. Factors: technical=+0.01; sentiment=+0.02; risk=+0.08.",
+      "expected_signal": "hold"
+    },
+    {
+      "id": "c12",
+      "predicted_signal": "buy",
+      "predicted_score": 0.518,
+      "predicted_confidence": 0.6608,
+      "reasoning": "Coordinator Agent computed score +0.52 -> BUY. Factors: technical=+0.54; sentiment=+0.51; risk=+0.47.",
+      "expected_signal": "buy"
+    }
+  ]
+}
