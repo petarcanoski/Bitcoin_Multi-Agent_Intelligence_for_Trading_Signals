@@ -1,0 +1,14 @@
+{
+  "architecture": "CNN-LSTM",
+  "description": "CNN [64,128,256] → LSTM (h=256, 2L)",
+  "features": "81 positive-importance features",
+  "seq_len": 30,
+  "trade_threshold": 0.45,
+  "cum_pnl_pct": 1780.81,
+  "sharpe": 18.615,
+  "win_rate": 0.6555,
+  "n_trades": 8450,
+  "max_dd_pct": -71.91,
+  "trained": "2026-05-17",
+  "source_dir": "seq_30"
+}

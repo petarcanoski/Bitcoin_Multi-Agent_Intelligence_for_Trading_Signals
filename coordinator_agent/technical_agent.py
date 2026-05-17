@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -82,19 +83,18 @@ class CNNLSTMModel(nn.Module):
 class TechnicalAgent:
     def __init__(self, repo_root: Path):
         self.repo_root = repo_root
-        self.predictor_root = repo_root / "bitcoin-predictor-dev"
-        self.trade_model_path = self.predictor_root / "src" / "models" / "trade" / "best_model.pt"
-        self.direction_model_path = self.predictor_root / "src" / "models" / "direction" / "best_model.pt"
+        self.predictor_root = repo_root / "technical_analysis"
+        self.trade_model_path = self.predictor_root / "src" / "models" / "final" / "trade" / "best_model.pt"
+        self.direction_model_path = self.predictor_root / "src" / "models" / "final" / "direction" / "best_model.pt"
         self.features_path = self.predictor_root / "data" / "processed" / "features_1h.parquet"
+        imp_path = repo_root / "project-context" / "feature_importance.json"
+        self._positive_features: List[str] = [
+            f for f, v in json.loads(imp_path.read_text()) if v >= 0
+        ]
 
-    @staticmethod
-    def _select_features(df: pd.DataFrame) -> List[str]:
-        exclude = {
-            "open", "high", "low", "close", "volume",
-            "label", "hit_bars", "market_return", "trade_return",
-            "tp_price", "entry_price", "sl_price", "atr_used", "reward_risk",
-        }
-        return [c for c in df.columns if c not in exclude]
+    def _select_features(self, df: pd.DataFrame) -> List[str]:
+        available = set(df.columns)
+        return [f for f in self._positive_features if f in available]
 
     @staticmethod
     def _build_model_from_checkpoint(checkpoint_path: Path) -> Tuple[CNNLSTMModel, Dict, int, int]:
@@ -115,7 +115,7 @@ class TechnicalAgent:
         model.eval()
         return model, ckpt, input_features, sequence_length
 
-    def run(self, trade_threshold: float = 0.55) -> TechnicalSignal:
+    def run(self, trade_threshold: float = 0.45) -> TechnicalSignal:
         trade_model, _, trade_input_features, seq_len = self._build_model_from_checkpoint(self.trade_model_path)
         direction_model, _, dir_input_features, _ = self._build_model_from_checkpoint(self.direction_model_path)
 
@@ -171,6 +171,5 @@ class TechnicalAgent:
             feature_count=len(feature_cols),
             reasoning=reasoning,
         )
-
 
 

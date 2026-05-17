@@ -43,9 +43,9 @@ The goal is simple: **fewer blind spots, more robust decisions**.
 
 - Inputs: OHLCV, indicators, patterns
 - Existing assets used for integration:
-  - `bitcoin-predictor-dev/src/models/direction/best_model.pt`
-  - `bitcoin-predictor-dev/src/models/trade/best_model.pt`
-  - `bitcoin-predictor-dev/data/processed/features_1h.parquet`
+  - `technical_analysis/src/models/direction/best_model.pt`
+  - `technical_analysis/src/models/trade/best_model.pt`
+  - `technical_analysis/data/processed/features_1h.parquet`
 - Output: `BUY | SELL | HOLD`
 
 ### Agent 2 - Sentiment & Macro (implemented)
@@ -80,7 +80,7 @@ Code/
 ├── sentiment_analysis/      # Agent 2
 ├── agent_risk/              # Agent 3
 ├── coordinator_agent/       # Agent 4
-└── bitcoin-predictor-dev/   # Agent 1 assets and training artifacts
+└── technical_analysis/   # Agent 1 assets and training artifacts
 ```
 
 ## Data Sources

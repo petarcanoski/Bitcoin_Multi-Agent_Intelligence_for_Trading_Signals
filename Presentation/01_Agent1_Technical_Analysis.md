@@ -6,7 +6,7 @@ Agent 1 is the market-structure specialist. It looks only at price/volume-derive
 In your project, this agent is already trained by your teammate and reused in inference mode (no retraining needed).
 
 ## 2) Inputs and artifacts used
-From `bitcoin-predictor-dev`:
+From `technical_analysis`:
 
 - `src/models/trade/best_model.pt`
 - `src/models/direction/best_model.pt`

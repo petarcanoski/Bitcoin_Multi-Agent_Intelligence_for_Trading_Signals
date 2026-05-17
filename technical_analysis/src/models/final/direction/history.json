@@ -1,0 +1,142 @@
+[
+  {
+    "epoch": 1,
+    "val_loss": 0.6876,
+    "val_acc": 0.5341
+  },
+  {
+    "epoch": 2,
+    "val_loss": 0.6604,
+    "val_acc": 0.6256
+  },
+  {
+    "epoch": 3,
+    "val_loss": 0.68756,
+    "val_acc": 0.6082
+  },
+  {
+    "epoch": 4,
+    "val_loss": 0.67529,
+    "val_acc": 0.6007
+  },
+  {
+    "epoch": 5,
+    "val_loss": 0.69605,
+    "val_acc": 0.6025
+  },
+  {
+    "epoch": 6,
+    "val_loss": 0.70517,
+    "val_acc": 0.5483
+  },
+  {
+    "epoch": 7,
+    "val_loss": 0.75539,
+    "val_acc": 0.5616
+  },
+  {
+    "epoch": 8,
+    "val_loss": 0.74169,
+    "val_acc": 0.5815
+  },
+  {
+    "epoch": 9,
+    "val_loss": 0.67313,
+    "val_acc": 0.645
+  },
+  {
+    "epoch": 10,
+    "val_loss": 0.71447,
+    "val_acc": 0.5804
+  },
+  {
+    "epoch": 11,
+    "val_loss": 0.63261,
+    "val_acc": 0.6445
+  },
+  {
+    "epoch": 12,
+    "val_loss": 0.64418,
+    "val_acc": 0.6331
+  },
+  {
+    "epoch": 13,
+    "val_loss": 0.61598,
+    "val_acc": 0.6553
+  },
+  {
+    "epoch": 14,
+    "val_loss": 0.62687,
+    "val_acc": 0.6553
+  },
+  {
+    "epoch": 15,
+    "val_loss": 0.66376,
+    "val_acc": 0.6117
+  },
+  {
+    "epoch": 16,
+    "val_loss": 0.74507,
+    "val_acc": 0.5561
+  },
+  {
+    "epoch": 17,
+    "val_loss": 0.6353,
+    "val_acc": 0.6489
+  },
+  {
+    "epoch": 18,
+    "val_loss": 0.64184,
+    "val_acc": 0.6258
+  },
+  {
+    "epoch": 19,
+    "val_loss": 0.65817,
+    "val_acc": 0.6141
+  },
+  {
+    "epoch": 20,
+    "val_loss": 0.71719,
+    "val_acc": 0.6014
+  },
+  {
+    "epoch": 21,
+    "val_loss": 0.64466,
+    "val_acc": 0.6476
+  },
+  {
+    "epoch": 22,
+    "val_loss": 0.70752,
+    "val_acc": 0.6361
+  },
+  {
+    "epoch": 23,
+    "val_loss": 0.67816,
+    "val_acc": 0.6174
+  },
+  {
+    "epoch": 24,
+    "val_loss": 0.67136,
+    "val_acc": 0.6472
+  },
+  {
+    "epoch": 25,
+    "val_loss": 0.67276,
+    "val_acc": 0.6191
+  },
+  {
+    "epoch": 26,
+    "val_loss": 0.68957,
+    "val_acc": 0.6361
+  },
+  {
+    "epoch": 27,
+    "val_loss": 0.73946,
+    "val_acc": 0.6007
+  },
+  {
+    "epoch": 28,
+    "val_loss": 0.7104,
+    "val_acc": 0.6162
+  }
+]

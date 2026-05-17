@@ -58,7 +58,6 @@ class CoordinatorAgent:
         return float({"buy": 1.0, "hold": 0.0, "sell": -1.0}.get(str(signal).lower(), 0.0))
 
     def _build_agentic_case(self, technical: Dict, sentiment: Dict, risk: Dict) -> Dict:
-        # Convert existing agent outputs to the feature schema expected by agentic_prototype.
         trend_strength = 2.0 * (float(technical.get("long_probability", 0.5)) - 0.5)
         narrative = " ".join(sentiment.get("key_factors", []))
         return {
@@ -112,7 +111,7 @@ class CoordinatorAgent:
             key_factors=key_factors,
             reasoning=reasoning,
             data_sources=[
-                "bitcoin-predictor-dev models",
+                "technical_analysis models",
                 "sentiment_analysis",
                 "agent_risk",
                 "agentic_prototype LangGraph",
@@ -123,8 +122,7 @@ class CoordinatorAgent:
         tech_score = self._signal_to_score(technical["signal"]) * float(technical.get("confidence", 0.0))
         sentiment_score = self._signal_to_score(sentiment["signal"]) * float(sentiment.get("confidence", 0.0))
 
-        # Higher weight for technical model because it is directly trained on OHLCV-derived features.
-        combined_score = 0.60 * tech_score + 0.40 * sentiment_score
+        combined_score = 0.65 * tech_score + 0.35 * sentiment_score
 
         risk_signal = str(risk.get("signal", "medium_risk")).lower()
         risk_multiplier = {
@@ -135,7 +133,6 @@ class CoordinatorAgent:
 
         adjusted_score = max(-1.0, min(1.0, combined_score * risk_multiplier))
 
-        # Conservative risk gate: high risk suppresses BUY unless conviction is very high.
         if risk_signal == "high_risk" and adjusted_score > 0.55:
             final_signal = "hold"
         elif adjusted_score >= 0.25:
@@ -181,12 +178,11 @@ class CoordinatorAgent:
             key_factors=key_factors,
             reasoning=reasoning,
             data_sources=[
-                "bitcoin-predictor-dev models",
-                "bitcoin-predictor-dev features_1h.parquet",
+                "technical_analysis models",
+                "technical_analysis features_1h.parquet",
                 "sentiment_analysis",
                 "agent_risk",
             ],
         )
-
 
 

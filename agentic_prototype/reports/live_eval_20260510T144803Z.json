@@ -22,8 +22,8 @@
         "reasoning": "Coordinator combined technical and sentiment scores into +0.27, then adjusted using risk level medium_risk. Final signal is BUY with confidence 0.38. Technical reason: Trade model probability is 0.72 (above threshold 0.55); direction model LONG probability is 0.63. Sentiment reason: **HOLD Signal**\n\nWe recommend a HOLD signal due to mixed and neutral sentiment indicators. The overall sentiment score of -0.163 is neutral, driven by negative macroeconomic indicators (-0.750) offset by slightly positive Twitter/X sentiment (0.207). Meanwhile, the community remains bullish (78%), but this is not enough to outweigh the neutral sentiment. Traders should be cautious and consider the potential risks before making a move, as the mixed signals do not provide a clear direction. Risk reason: MEDIUM RISK signal generated with combined risk score of 0.56. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.51. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.",
         "timestamp": "2026-05-10T16:46:33.431929",
         "data_sources": [
-          "bitcoin-predictor-dev models",
-          "bitcoin-predictor-dev features_1h.parquet",
+          "technical_analysis models",
+          "technical_analysis features_1h.parquet",
           "sentiment_analysis",
           "agent_risk"
         ]
@@ -42,7 +42,7 @@
         "reasoning": "Agentic coordinator output score +0.08 with signal HOLD and confidence 0.47. Workflow reasoning: Coordinator Agent computed score +0.08 -> HOLD. Factors: technical=+0.30; sentiment=-0.09; risk=-0.13. Technical reason: Trade model probability is 0.72 (above threshold 0.55); direction model LONG probability is 0.63. Sentiment reason: **HOLD Signal: Neutral Market Conditions**\n\nWe're recommending a HOLD signal due to mixed and neutral signals from various sources. The combined weighted sentiment score is slightly negative (-0.163), primarily driven by negative macroeconomic indicators (-0.750). However, community sentiment remains bullish (78%), and a relatively small positive Bitcoin price change (+0.67%) indicates stability.\n\n**Key Factors:**\n\n1. Neutral news and Twitter/X sentiment\n2. Negative macroeconomic indicators\n3. Bullish community sentiment\n4. Stable Bitcoin price\n\n**Traders should be aware:**\n\n* Market volatility could increase if negative macroeconomic indicators persist or worsen.\n* A shift in community sentiment could trigger a buy or sell signal.\n* Traders should monitor news and Twitter/X sentiment for potential catalysts that could drive a more significant price movement. Risk reason: MEDIUM RISK signal generated with combined risk score of 0.56. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.51. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.",
         "timestamp": "2026-05-10T16:46:50.230249",
         "data_sources": [
-          "bitcoin-predictor-dev models",
+          "technical_analysis models",
           "sentiment_analysis",
           "agent_risk",
           "agentic_prototype LangGraph"
@@ -68,8 +68,8 @@
         "reasoning": "Coordinator combined technical and sentiment scores into +0.27, then adjusted using risk level medium_risk. Final signal is BUY with confidence 0.38. Technical reason: Trade model probability is 0.72 (above threshold 0.55); direction model LONG probability is 0.63. Sentiment reason: **HOLD Signal:**\n\nWe're recommending a HOLD position due to neutral market conditions. The combined weighted sentiment score of -0.163 indicates a slight bearish bias, but it's not strong enough to suggest a sell signal. Additionally, the 24-hour Bitcoin price increase of 0.67% and high community bullish sentiment of 78% suggest some bullish momentum.\n\n**Dominant Factors:**\n\n* Neutral macroeconomic indicators (-0.750 score) and a low news sentiment score (0.000) are driving the slightly bearish bias.\n* Twitter/X sentiment analysis (0.207 score) and community bullish sentiment (78%) are countering the bearish sentiment.\n\n**What Traders Should Be Aware Of:**\n\n* The neutral market conditions may change rapidly, so traders should remain vigilant and adjust their positions accordingly.\n* The community's high bullish sentiment may be driven by short-term price movements, so traders should monitor fundamental and technical indicators for more sustainable trends. Risk reason: MEDIUM RISK signal generated with combined risk score of 0.56. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.51. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.",
         "timestamp": "2026-05-10T16:47:11.242137",
         "data_sources": [
-          "bitcoin-predictor-dev models",
-          "bitcoin-predictor-dev features_1h.parquet",
+          "technical_analysis models",
+          "technical_analysis features_1h.parquet",
           "sentiment_analysis",
           "agent_risk"
         ]
@@ -88,7 +88,7 @@
         "reasoning": "Agentic coordinator output score +0.08 with signal HOLD and confidence 0.47. Workflow reasoning: Coordinator Agent computed score +0.08 -> HOLD. Factors: technical=+0.30; sentiment=-0.09; risk=-0.13. Technical reason: Trade model probability is 0.72 (above threshold 0.55); direction model LONG probability is 0.63. Sentiment reason: **HOLD Signal:**\n\nThe HOLD signal indicates a neutral stance on the cryptocurrency market, driven by mixed sentiment indicators. Dominant factors include a near-zero news sentiment score, a slightly bullish Twitter/X sentiment score, and a strongly bearish macroeconomic indicator score. Traders should be aware of the conflicting signals, particularly the negative macroeconomic indicators, which may outweigh the community's bullish sentiment. As a result, it's essential to approach trading with caution and wait for clearer market signals before making any significant decisions. Risk reason: MEDIUM RISK signal generated with combined risk score of 0.56. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.51. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.",
         "timestamp": "2026-05-10T16:47:27.693527",
         "data_sources": [
-          "bitcoin-predictor-dev models",
+          "technical_analysis models",
           "sentiment_analysis",
           "agent_risk",
           "agentic_prototype LangGraph"
@@ -114,8 +114,8 @@
         "reasoning": "Coordinator combined technical and sentiment scores into +0.27, then adjusted using risk level medium_risk. Final signal is BUY with confidence 0.38. Technical reason: Trade model probability is 0.72 (above threshold 0.55); direction model LONG probability is 0.63. Sentiment reason: **HOLD Signal: Neutral Market Conditions**\n\nThe HOLD signal is driven by a mixed sentiment analysis, with negative macroeconomic indicators (-0.750) offsetting a relatively positive community sentiment (78%) and minor positive Twitter/X sentiment (0.207). The news sentiment analysis is neutral, with no significant score (0.000). Traders should be cautious due to the negative macroeconomic indicators, which may impact market stability. Focus on maintaining a neutral position and waiting for clearer market signals before making any significant decisions. Risk reason: MEDIUM RISK signal generated with combined risk score of 0.56. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.51. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.",
         "timestamp": "2026-05-10T16:47:46.776235",
         "data_sources": [
-          "bitcoin-predictor-dev models",
-          "bitcoin-predictor-dev features_1h.parquet",
+          "technical_analysis models",
+          "technical_analysis features_1h.parquet",
           "sentiment_analysis",
           "agent_risk"
         ]
@@ -134,7 +134,7 @@
         "reasoning": "Agentic coordinator output score +0.08 with signal HOLD and confidence 0.47. Workflow reasoning: Coordinator Agent computed score +0.08 -> HOLD. Factors: technical=+0.30; sentiment=-0.09; risk=-0.13. Technical reason: Trade model probability is 0.72 (above threshold 0.55); direction model LONG probability is 0.63. Sentiment reason: **HOLD Signal:**\n\nWith a combined weighted sentiment score of -0.163, this HOLD signal indicates a moderate risk environment for Bitcoin. The dominant factors driving this signal are the negative macroeconomic indicators (-0.750), which outweigh the relatively neutral news sentiment (0.000) and slightly bullish Twitter/X sentiment (0.207). Despite a 24-hour price increase of +0.67%, the overall sentiment remains cautious. Traders should be aware of the potential for a reversal if macroeconomic indicators improve, but for now, it's best to maintain a neutral position and wait for clearer signals. Risk reason: MEDIUM RISK signal generated with combined risk score of 0.56. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.51. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.",
         "timestamp": "2026-05-10T16:48:03.282027",
         "data_sources": [
-          "bitcoin-predictor-dev models",
+          "technical_analysis models",
           "sentiment_analysis",
           "agent_risk",
           "agentic_prototype LangGraph"

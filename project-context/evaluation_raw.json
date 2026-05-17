@@ -1,0 +1,285 @@
+{
+  "technical": {
+    "test_period": {
+      "start": "2025-02-05",
+      "end": "2026-02-20",
+      "n_bars": 9133
+    },
+    "stage1": {
+      "accuracy": 0.6419577356837841,
+      "n_predicted_trades": 8653,
+      "confusion_matrix": [
+        [
+          478,
+          3268
+        ],
+        [
+          2,
+          5385
+        ]
+      ],
+      "report": {
+        "no-trade": {
+          "precision": 0.9958333333333333,
+          "recall": 0.12760277629471437,
+          "f1-score": 0.22621864647420728,
+          "support": 3746.0
+        },
+        "trade": {
+          "precision": 0.6223275164682769,
+          "recall": 0.9996287358455541,
+          "f1-score": 0.7670940170940171,
+          "support": 5387.0
+        },
+        "accuracy": 0.6419577356837841,
+        "macro avg": {
+          "precision": 0.8090804249008051,
+          "recall": 0.5636157560701343,
+          "f1-score": 0.4966563317841122,
+          "support": 9133.0
+        },
+        "weighted avg": {
+          "precision": 0.7755250189292976,
+          "recall": 0.6419577356837841,
+          "f1-score": 0.5452480586639495,
+          "support": 9133.0
+        }
+      }
+    },
+    "stage2": {
+      "accuracy": 0.6646239554317549,
+      "n_evaluated": 5385,
+      "confusion_matrix": [
+        [
+          1746,
+          1065
+        ],
+        [
+          741,
+          1833
+        ]
+      ],
+      "report": {
+        "short": {
+          "precision": 0.7020506634499397,
+          "recall": 0.6211312700106724,
+          "f1-score": 0.6591166477916195,
+          "support": 2811.0
+        },
+        "long": {
+          "precision": 0.6325051759834368,
+          "recall": 0.7121212121212122,
+          "f1-score": 0.6699561403508771,
+          "support": 2574.0
+        },
+        "accuracy": 0.6646239554317549,
+        "macro avg": {
+          "precision": 0.6672779197166883,
+          "recall": 0.6666262410659423,
+          "f1-score": 0.6645363940712483,
+          "support": 5385.0
+        },
+        "weighted avg": {
+          "precision": 0.6688083078809929,
+          "recall": 0.6646239554317549,
+          "f1-score": 0.6642978648477995,
+          "support": 5385.0
+        }
+      }
+    },
+    "backtest_ta_only": {
+      "n_trades": 8653,
+      "n_wins": 5681,
+      "n_losses": 2972,
+      "win_rate": 0.6565353056743326,
+      "cumulative_pnl_pct": 1799.2415821577279,
+      "avg_trade_pnl_pct": 0.20793269180142468,
+      "sharpe_annualized": 18.865336878181516,
+      "max_drawdown_pct": -71.90586469663901,
+      "buy_and_hold_pct": -122.3745523484796,
+      "signal_counts": {
+        "buy": 4521,
+        "sell": 4132,
+        "hold": 480
+      }
+    }
+  },
+  "sentiment": {
+    "dataset": "financial_phrasebank (sentences_75agree)",
+    "n_samples": 3453,
+    "model": "ProsusAI/finbert",
+    "accuracy": 0.9472922096727483,
+    "confusion_matrix": [
+      [
+        413,
+        2,
+        5
+      ],
+      [
+        52,
+        2001,
+        93
+      ],
+      [
+        15,
+        15,
+        857
+      ]
+    ],
+    "report": {
+      "negative": {
+        "precision": 0.8604166666666667,
+        "recall": 0.9833333333333333,
+        "f1-score": 0.9177777777777778,
+        "support": 420.0
+      },
+      "neutral": {
+        "precision": 0.9915758176412289,
+        "recall": 0.9324324324324325,
+        "f1-score": 0.9610951008645533,
+        "support": 2146.0
+      },
+      "positive": {
+        "precision": 0.8973821989528796,
+        "recall": 0.9661781285231116,
+        "f1-score": 0.9305103148751357,
+        "support": 887.0
+      },
+      "accuracy": 0.9472922096727483,
+      "macro avg": {
+        "precision": 0.9164582277535919,
+        "recall": 0.9606479647629591,
+        "f1-score": 0.9364610645058223,
+        "support": 3453.0
+      },
+      "weighted avg": {
+        "precision": 0.9514262134750309,
+        "recall": 0.9472922096727483,
+        "f1-score": 0.947969708200476,
+        "support": 3453.0
+      }
+    },
+    "avg_sentiment_score_by_class": {
+      "negative": -0.9154677391052246,
+      "neutral": 0.06391952186822891,
+      "positive": 0.8586454391479492
+    },
+    "inference_seconds": 34.0799286365509,
+    "label_distribution": {
+      "neutral": 2146,
+      "positive": 887,
+      "negative": 420
+    },
+    "misclassification_count": 182
+  },
+  "risk": {
+    "methodology": {
+      "vol_proxy": "atr_14_pct (ATR-14 as % of price)",
+      "low_threshold": 0.006421791503486,
+      "high_threshold": 0.010707858728208812,
+      "drawdown_horizon_bars": 48,
+      "severe_drawdown_threshold_pct": 3.0
+    },
+    "test_period": {
+      "start": "2025-02-04",
+      "end": "2026-02-18",
+      "n_bars": 9115
+    },
+    "severe_drawdown_rate_pct": 25.68294020844761,
+    "risk_distribution": {
+      "high_risk": 738,
+      "medium_risk": 2630,
+      "low_risk": 5747
+    },
+    "avg_fwd_drawdown_by_risk_pct": {
+      "low_risk": 1.782258558529104,
+      "medium_risk": 2.3979221905243033,
+      "high_risk": 4.020267185574715
+    },
+    "pct_severe_by_risk": {
+      "low_risk": 20.045240995301896,
+      "medium_risk": 30.494296577946766,
+      "high_risk": 52.4390243902439
+    },
+    "binary_classification": {
+      "confusion_matrix": [
+        [
+          6423,
+          351
+        ],
+        [
+          1954,
+          387
+        ]
+      ],
+      "report": {
+        "no_severe_dd": {
+          "precision": 0.7667422705025666,
+          "recall": 0.9481842338352524,
+          "f1-score": 0.8478648274041317,
+          "support": 6774.0
+        },
+        "severe_dd": {
+          "precision": 0.524390243902439,
+          "recall": 0.1653139683895771,
+          "f1-score": 0.2513803182851575,
+          "support": 2341.0
+        },
+        "accuracy": 0.7471201316511246,
+        "macro avg": {
+          "precision": 0.6455662572025028,
+          "recall": 0.5567491011124147,
+          "f1-score": 0.5496225728446447,
+          "support": 9115.0
+        },
+        "weighted avg": {
+          "precision": 0.7044991444168948,
+          "recall": 0.7471201316511246,
+          "f1-score": 0.6946700675744534,
+          "support": 9115.0
+        }
+      }
+    }
+  },
+  "backtest": {
+    "sentiment_source": "Bitcoin Fear & Greed Index (alternative.me)",
+    "test_period": {
+      "start": "2025-02-05",
+      "end": "2026-02-20",
+      "n_bars": 9133
+    },
+    "buy_and_hold_pct": -127.67957343300912,
+    "ta_only": {
+      "label": "TA-Only",
+      "n_trades": 8653,
+      "n_wins": 5681,
+      "n_losses": 2972,
+      "win_rate": 0.6565353056743326,
+      "cumulative_pnl_pct": 1799.2415821577279,
+      "avg_trade_pnl_pct": 0.20793269180142468,
+      "sharpe_annualized": 18.865336878181516,
+      "max_drawdown_pct": -71.90586469663901,
+      "signal_counts": {
+        "buy": 4521,
+        "sell": 4132,
+        "hold": 480
+      }
+    },
+    "agentic": {
+      "label": "Agentic",
+      "n_trades": 6785,
+      "n_wins": 4407,
+      "n_losses": 2378,
+      "win_rate": 0.649521002210759,
+      "cumulative_pnl_pct": 1269.066962861388,
+      "avg_trade_pnl_pct": 0.1870400829567263,
+      "sharpe_annualized": 15.397842394554242,
+      "max_drawdown_pct": -68.77960437008639,
+      "signal_counts": {
+        "buy": 4293,
+        "sell": 2492,
+        "hold": 2348
+      }
+    }
+  }
+}

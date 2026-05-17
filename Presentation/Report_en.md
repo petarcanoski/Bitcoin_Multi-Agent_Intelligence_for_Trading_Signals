@@ -27,7 +27,7 @@ The system is designed to produce an explainable trading signal while combining 
 
 The runtime flow is straight-forward: each agent ingests domain-specific inputs, computes a normalized numeric score and a confidence, and returns a JSON-like payload. The coordinator then combines these payloads to produce the final trading decision.
 
-1. `Agent 1 (Technical)` performs inference with pretrained models using `bitcoin-predictor-dev/data/processed/features_1h.parquet`.
+1. `Agent 1 (Technical)` performs inference with pretrained models using `technical_analysis/data/processed/features_1h.parquet`.
 2. `Agent 2 (Sentiment + Macro)` gathers news, monitored X/Twitter feeds and macro indicators to create a directional narrative score.
 3. `Agent 3 (Risk + Volatility)` computes a regime score from on-chain metrics and geopolitical event signals.
 4. `Agent 4 (Coordinator)` fuses directional conviction from Agents 1 and 2, and then modulates the result using Agent 3's risk state to obtain the final, explainable signal.
@@ -47,10 +47,10 @@ Agents are intentionally isolated to simplify development and dependency managem
 
 ## 4. Agent 1 — Technical Analysis
 
-Agent 1 is the quantitative market-structure module and the most direct signal of short-to-medium term price behavior. It uses pretrained models included in `bitcoin-predictor-dev` and performs inference on the latest feature window.
+Agent 1 is the quantitative market-structure module and the most direct signal of short-to-medium term price behavior. It uses pretrained models included in `technical_analysis` and performs inference on the latest feature window.
 
 **Inputs**
-The agent loads two checkpoints from `bitcoin-predictor-dev/src/models` (trade and direction models) and reads recent feature frames from `bitcoin-predictor-dev/data/processed/features_1h.parquet`.
+The agent loads two checkpoints from `technical_analysis/src/models` (trade and direction models) and reads recent feature frames from `technical_analysis/data/processed/features_1h.parquet`.
 
 **Method**
 The pipeline reconstructs the expected input dimensions from checkpoint metadata, builds a sliding window (default 60 rows), normalizes features using stored preprocessing parameters, and runs two models:
@@ -318,9 +318,9 @@ The project implements a practical, explainable multi-agent architecture where q
 
 ## Appendix A — Key Project Paths
 
-- `bitcoin-predictor-dev/src/models/direction/best_model.pt`
-- `bitcoin-predictor-dev/src/models/trade/best_model.pt`
-- `bitcoin-predictor-dev/data/processed/features_1h.parquet`
+- `technical_analysis/src/models/direction/best_model.pt`
+- `technical_analysis/src/models/trade/best_model.pt`
+- `technical_analysis/data/processed/features_1h.parquet`
 - `sentiment_analysis/sentiment_agent.py`
 - `sentiment_analysis/sentiment_analyzer.py`
 - `agent_risk/risk_agent.py`

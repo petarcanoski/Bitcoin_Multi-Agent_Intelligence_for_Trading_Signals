@@ -48,8 +48,13 @@ pip-wheel-metadata/
 # Cache and model folders
 .cache/
 transformers_cache/
-models/
+#models/
 *.cache
+
+**/.claude/
+**/.claude-flow/
+**/claude.md
+.mcp.json
 
 # Logs and test outputs
 *.log

@@ -33,9 +33,9 @@ Agent 1 is integrated directly through Python class call:
 
 It loads pretrained models and latest features from:
 
-- `bitcoin-predictor-dev/src/models/trade/best_model.pt`
-- `bitcoin-predictor-dev/src/models/direction/best_model.pt`
-- `bitcoin-predictor-dev/data/processed/features_1h.parquet`
+- `technical_analysis/src/models/trade/best_model.pt`
+- `technical_analysis/src/models/direction/best_model.pt`
+- `technical_analysis/data/processed/features_1h.parquet`
 
 ## 4) Fusion math
 ### Step A: Convert class signal to numeric score
