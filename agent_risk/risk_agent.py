@@ -1,11 +1,22 @@
-from typing import List, Dict
+import json
+import pickle
+import numpy as np
+import pandas as pd
+from typing import List, Dict, Optional
 from datetime import datetime
+from pathlib import Path
 import logging
 
 from config import RiskConfig
 from models import RiskSignalOutput, OnChainMetric, GeopoliticalEvent, VolatilityMetric
 from onchain_clients import OnChainAnalyzer
 from geopolitical_clients import GeopoliticalAnalyzer
+
+_AGENT_DIR  = Path(__file__).resolve().parent
+_REPO_ROOT  = _AGENT_DIR.parent
+_MODEL_PATH = _AGENT_DIR / "models" / "risk_lgbm.pkl"
+_META_PATH  = _AGENT_DIR / "models" / "risk_meta.json"
+_FEATS_PATH = _REPO_ROOT / "technical_analysis" / "data" / "processed" / "features_1h.parquet"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -238,6 +249,54 @@ class RiskAgent:
 
         return " ".join(reasoning_parts)
 
+    def _run_model(self) -> Optional[RiskSignalOutput]:
+        if not _MODEL_PATH.exists() or not _FEATS_PATH.exists():
+            return None
+        try:
+            with open(_MODEL_PATH, "rb") as f:
+                model = pickle.load(f)
+            meta = json.loads(_META_PATH.read_text()) if _META_PATH.exists() else {}
+            features = meta.get("features", [])
+
+            feats = pd.read_parquet(_FEATS_PATH)
+            feats.index = pd.to_datetime(feats.index)
+            feats = feats.sort_index()
+
+            available = [f for f in features if f in feats.columns]
+            row = feats[available].iloc[[-1]].values.astype("float32")
+            pred_int = int(model.predict(row)[0])
+            proba = model.predict_proba(row)[0]
+
+            label_map = meta.get("label_map", {"0": "low_risk", "1": "medium_risk", "2": "high_risk"})
+            signal = label_map.get(str(pred_int), "medium_risk")
+            confidence = float(proba[pred_int])
+
+            risk_score = float(proba[2] * 1.0 + proba[1] * 0.5 + proba[0] * 0.0)
+
+            reasoning = (
+                f"LightGBM model predicted {signal.upper()} with confidence {confidence:.2f}. "
+                f"Class probabilities — low: {proba[0]:.2f}, medium: {proba[1]:.2f}, high: {proba[2]:.2f}. "
+                f"Inference on latest bar: {str(feats.index[-1])}."
+            )
+
+            return RiskSignalOutput(
+                agent_type="risk_volatility",
+                signal=signal,
+                confidence=confidence,
+                risk_score=risk_score,
+                onchain_risk=risk_score,
+                geopolitical_risk=0.5,
+                volatility_score=risk_score,
+                key_risks=[f"Model predicted {signal.upper()} risk"],
+                key_opportunities=["Low risk environment" if signal == "low_risk" else ""],
+                reasoning=reasoning,
+                timestamp=datetime.now(),
+                data_sources=["features_1h.parquet", "LightGBM risk model"],
+            )
+        except Exception as e:
+            logger.warning(f"Model inference failed: {e}. Falling back to heuristic.")
+            return None
+
     def run(self, geopolitical_days_back: int = None) -> RiskSignalOutput:
         """
         Main execution method - runs the full risk analysis pipeline
@@ -252,8 +311,12 @@ class RiskAgent:
         logger.info("Starting Risk Agent Analysis")
         logger.info("=" * 60)
 
+        model_result = self._run_model()
+        if model_result is not None:
+            logger.info(f"Model inference: {model_result.signal.upper()} (conf={model_result.confidence:.2f})")
+            return model_result
+
         try:
-            # Step 1: Fetch data
             onchain_metrics = self.fetch_onchain_data()
             geopolitical_events = self.fetch_geopolitical_data(geopolitical_days_back)
 

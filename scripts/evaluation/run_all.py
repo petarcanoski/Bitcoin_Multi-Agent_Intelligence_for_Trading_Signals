@@ -3,6 +3,7 @@ import sys
 import json
 import time
 import traceback
+import multiprocessing
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -423,20 +424,48 @@ def _methodology_notes() -> str:
 """
 
 
+def _worker(module_name: str, fn_name: str, kwargs: dict, queue):
+    sys.path.insert(0, str(Path(__file__).parent))
+    import importlib
+    mod = importlib.import_module(module_name)
+    fn = getattr(mod, fn_name)
+    try:
+        result = fn(**kwargs)
+        queue.put(("ok", result))
+    except Exception as e:
+        queue.put(("err", str(e)))
+
+
+def _run_isolated(label: str, module: str, fn: str, kwargs: dict = None):
+    print(f"\n{'='*60}")
+    print(f"  Running: {label}")
+    print(f"{'='*60}\n")
+    t0 = time.time()
+    q = multiprocessing.Queue()
+    p = multiprocessing.Process(target=_worker, args=(module, fn, kwargs or {}, q))
+    p.start()
+    p.join()
+    elapsed = time.time() - t0
+    if p.exitcode != 0:
+        print(f"\n  ✗ {label} FAILED (exit code {p.exitcode})")
+        return {"error": f"process exited with code {p.exitcode}"}, elapsed
+    status, result = q.get()
+    if status == "err":
+        print(f"\n  ✗ {label} FAILED: {result}")
+        return {"error": result}, elapsed
+    print(f"\n  ✓ {label} completed in {elapsed:.1f}s")
+    return result, elapsed
+
+
 def main():
     total_t0 = time.time()
     print("\n" + "="*60)
     print("  BITCOIN MULTI-AGENT FULL EVALUATION")
     print("="*60)
 
-    from technical import evaluate as eval_tech
-    tech, tech_t = _run("Technical Agent (CNN-LSTM)", eval_tech)
-
-    from sentiment import evaluate as eval_sent
-    sent, sent_t = _run("Sentiment Agent (FinBERT / financial_phrasebank)", eval_sent)
-
-    from risk import evaluate as eval_risk
-    risk, risk_t = _run("Risk Agent (ATR-14 proxy)", eval_risk)
+    tech, tech_t = _run_isolated("Technical Agent (CNN-LSTM)", "technical", "evaluate")
+    sent, sent_t = _run_isolated("Sentiment Agent (FinBERT / financial_phrasebank)", "sentiment", "evaluate")
+    risk, risk_t = _run_isolated("Risk Agent (LightGBM)", "risk", "evaluate")
 
     from backtest import compare
     comp_fn = lambda: compare(tech_results=tech, risk_results=risk)
@@ -465,4 +494,5 @@ def main():
 
 
 if __name__ == "__main__":
+    multiprocessing.set_start_method("spawn", force=True)
     main()
