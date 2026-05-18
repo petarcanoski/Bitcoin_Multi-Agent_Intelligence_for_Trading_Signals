@@ -237,3 +237,20 @@ Same architecture ([64,128,256] CNN → LSTM h=256 l=2), hyperparameters, and sp
 | 90 | +1064.64% | 11.460 | 62.11% | 7,073 | -95.19% |
 
 **Best seq_len: 30**  (P&L=+1780.81%  Sharpe=18.615)
+
+## 13. Sequence Length Search
+
+CNN-LSTM (81 positive features) retrained with different lookback windows.
+Same architecture ([64,128,256] CNN → LSTM h=256 l=2), hyperparameters, and split.
+
+| Seq Length | Cum P&L | Sharpe | Win Rate | Trades | Max DD |
+|------------|---------|--------|----------|--------|--------|
+| **30** *(current best)* | **+1780.81%** | 18.615 | 65.55% | 8,653 | -71.91% |
+| 6 | +1697.17% | 17.624 | 65.11% | 8,657 | -87.92% |
+| 24 | +1355.22% | 14.036 | 63.35% | 8,079 | -88.95% |
+| 18 | +1270.32% | 13.019 | 63.05% | 8,682 | -115.26% |
+| 60 *(baseline-60)* | +1261.28% | 12.971 | 63.61% | 8,441 | -143.05% |
+| 12 | +1259.92% | 12.957 | 63.15% | 8,505 | -105.53% |
+| 48 | +1114.99% | 11.426 | 62.21% | 8,669 | -116.59% |
+
+**Best seq_len: 30**  (P&L=+1780.81%  Sharpe=18.615)

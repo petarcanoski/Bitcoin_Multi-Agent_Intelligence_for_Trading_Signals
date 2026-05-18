@@ -51,7 +51,7 @@ def _load_model():
     return model, meta
 
 
-def evaluate() -> dict:
+def evaluate(force_heuristic: bool = False) -> dict:
     print("=" * 60)
     print("RISK AGENT EVALUATION")
     print("=" * 60)
@@ -85,7 +85,7 @@ def evaluate() -> dict:
 
     model, meta = _load_model()
 
-    if model is not None:
+    if model is not None and not force_heuristic:
         features = meta.get("features", [])
         available = [f for f in features if f in feats.columns]
         X_test = feats[available].iloc[val_end:valid].values.astype("float32")
@@ -100,8 +100,8 @@ def evaluate() -> dict:
         high_t = float(np.nanpercentile(train_vol, RISK_HIGH_PCT))
         test_vol = vol_col[val_end:valid]
         risk_pred = _heuristic_signal(test_vol, low_t, high_t)
-        mode = "ATR-14 percentile heuristic (model not found)"
-        print(f"\nFalling back to heuristic: {mode}")
+        mode = "ATR-14 percentile heuristic"
+        print(f"\nUsing heuristic: {mode}")
 
     dist = Counter(risk_pred)
     print("\nPredicted risk distribution:")
@@ -165,4 +165,6 @@ def evaluate() -> dict:
 
 
 if __name__ == "__main__":
-    evaluate()
+    import sys
+    force_heuristic = "--heuristic" in sys.argv
+    evaluate(force_heuristic=force_heuristic)

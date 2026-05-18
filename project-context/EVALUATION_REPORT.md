@@ -1,3 +1,5 @@
+# THIS IS OLD AND OUTDATED — DO NOT USE AS REFERENCE
+
 # Bitcoin Multi-Agent Intelligence — Full Evaluation Report
 
 _Generated: 2026-05-17 20:43 UTC_

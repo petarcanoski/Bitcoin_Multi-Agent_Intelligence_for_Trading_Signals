@@ -13,19 +13,21 @@ sys.path.insert(0, str(TA_ROOT / "src" / "models_def"))
 
 import feature_selection as fs   # noqa: E402  — patched per iteration
 
-SEQ_LENGTHS = [30, 90, 120]
+SEQ_LENGTHS = [6, 12, 18, 24, 48]
 
 
 def run():
     device    = fs._device()
     pos_feats = [f for f, v in json.loads(IMP_PATH.read_text()) if v >= 0]
 
-    results = {60: {"cum_pnl": 1261.28, "sharpe": 12.971,
-                    "win_rate": 0.6361, "n_trades": 8441, "max_dd": -143.05}}
+    results = {
+        60: {"cum_pnl": 1261.28, "sharpe": 12.971, "win_rate": 0.6361, "n_trades": 8441, "max_dd": -143.05},
+        30: {"cum_pnl": 1780.81, "sharpe": 18.615, "win_rate": 0.6555, "n_trades": 8653, "max_dd": -71.91},
+    }
 
     print(f"\n{'='*60}")
     print(f"SEQUENCE LENGTH SEARCH  [device={device}]")
-    print(f"  Testing seq_len ∈ {SEQ_LENGTHS}  (baseline=60 → +1261%)")
+    print(f"  Testing seq_len ∈ {SEQ_LENGTHS}  (known: 60→+1261%, 30→+1781%)")
     print(f"{'='*60}")
 
     for seq_len in SEQ_LENGTHS:
@@ -88,7 +90,7 @@ def _append_report(ordered, best_sl, best_m):
         wr   = m["win_rate"] * 100 if m["win_rate"] <= 1 else m["win_rate"]
         dd   = f"{m['max_dd']:.2f}%" if m.get("max_dd") is not None else "—"
         bold = "**" if sl == best_sl else ""
-        note = " *(baseline)*" if sl == 60 else ""
+        note = " *(baseline-60)*" if sl == 60 else " *(current best)*" if sl == 30 else ""
         rows += (f"| {bold}{sl}{bold}{note} | {bold}{m['cum_pnl']:+.2f}%{bold} "
                  f"| {m['sharpe']:.3f} | {wr:.2f}% | {m['n_trades']:,} | {dd} |\n")
     section = f"""
