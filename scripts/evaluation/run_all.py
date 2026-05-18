@@ -10,7 +10,6 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 REPORT_PATH = REPO_ROOT / "project-context" / "EVALUATION_REPORT.md"
 
 sys.path.insert(0, str(Path(__file__).parent))
-sys.path.insert(0, str(REPO_ROOT / "technical_analysis" / "src" / "scripts"))
 
 
 def _run(label: str, fn):
@@ -430,7 +429,7 @@ def main():
     print("  BITCOIN MULTI-AGENT FULL EVALUATION")
     print("="*60)
 
-    from evaluate_technical import evaluate as eval_tech
+    from technical import evaluate as eval_tech
     tech, tech_t = _run("Technical Agent (CNN-LSTM)", eval_tech)
 
     from sentiment import evaluate as eval_sent

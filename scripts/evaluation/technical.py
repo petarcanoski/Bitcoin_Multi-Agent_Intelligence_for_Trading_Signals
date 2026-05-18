@@ -7,8 +7,8 @@ import torch
 from pathlib import Path
 from sklearn.metrics import classification_report, confusion_matrix
 
-TA_ROOT    = Path(__file__).resolve().parents[2]
-REPO_ROOT  = TA_ROOT.parent
+REPO_ROOT  = Path(__file__).resolve().parents[2]
+TA_ROOT    = REPO_ROOT / "technical_analysis"
 DATA_DIR   = TA_ROOT / "data" / "processed"
 MODEL_DIR  = TA_ROOT / "src" / "models"
 IMP_PATH   = REPO_ROOT / "project-context" / "feature_importance.json"

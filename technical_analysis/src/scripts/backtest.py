@@ -222,7 +222,8 @@ def compare(tech_results: dict = None, risk_results: dict = None) -> dict:
         ts_aligned = test_ts[test_mask]
     else:
         print("  Recomputing technical inference...")
-        from evaluate_technical import evaluate as eval_tech
+        sys.path.insert(0, str(REPO_ROOT / "scripts" / "evaluation"))
+        from technical import evaluate as eval_tech
         tr = eval_tech()
         arr = tr["_arrays"]
         tech_ts = pd.to_datetime(arr["valid_ts"])
