@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "mode": "gemini-2.5-flash"
+  },
+  "judgements": {
+    "technical": {
+      "raw": "```json\n{\n  \"overall\": 65,\n  \"reasoning\": \"The agent shows impressive cumulative PnL and Sharpe ratio, significantly outperforming buy-and-hold in a down market. However, a catastrophic maximum drawdown of over 70% indicates extreme risk and poor capital preservation, while Stage 1's severe bias towards 'trade' predictions suggests"
+    },
+    "sentiment": {
+      "raw": "```json\n{\n  \"overall\": 90,\n  \"reasoning\": \"The agent demonstrates excellent overall accuracy and F1-scores, particularly for the majority neutral class. Its performance is strong across all classes, indicating a robust understanding of financial sentiment with minimal misclassifications.\",\n  \"recommendations\": [\n    \"Analyze the 145 misclassified neutral samples (5"
+    },
+    "risk": {
+      "raw": "```json\n{\n  \"overall\": 35,\n  \"reasoning\": \"The agent exhibits extremely low recall (16.5%) for severe drawdowns, meaning it fails to identify most critical risk events. While it shows some ability to differentiate risk levels, its high rate of false negatives makes it unreliable for practical risk management.\",\n  \"recommendations\": [\n    \""
+    },
+    "backtest": {
+      "overall": 65,
+      "reasoning": "The agent demonstrates strong profit generation and Sharpe ratio, significantly outperforming buy-and-hold. However, its performance is inferior to the TA-Only baseline, and both strategies exhibit unacceptably high maximum drawdowns, indicating severe risk management deficiencies.",
+      "recommendations": [
+        "Implement dynamic stop-loss and position sizing: Introduce a percentage-based trailing stop-loss (e.g., 5-10%) and adjust position size based on a fixed risk per trade (e.g., 1-2% of capital) to drastically reduce the maximum drawdown.",
+        "Refine sentiment integration logic: Analyze the correlation between the Bitcoin Fear & Greed Index and subsequent price movements, then adjust the agent's decision-making to use sentiment as a *filter* for TA signals (e.g., only take buy signals during extreme fear, or avoid sell signals during extreme greed) rather than a primary signal, aiming to outperform the TA-Only baseline.",
+        "Optimize trade exit strategy: Investigate and implement profit-taking mechanisms such as dynamic profit targets (e.g., based on ATR multiples) or partial exits, to improve average trade PnL and potentially reduce exposure during reversals, which could also help with drawdown."
+      ]
+    }
+  }
+}

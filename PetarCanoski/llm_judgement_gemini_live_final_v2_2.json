@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "mode": "gemini-2.0"
+  },
+  "judgements": {
+    "technical": {
+      "raw": "```json\n{\n  \"overall\": 90,\n  \"reasoning\": \"The agent demonstrates exceptional trading performance with a 179"
+    },
+    "sentiment": {
+      "raw": "```json\n{\n  \"overall\": 96,\n  \"reasoning\": \"The agent demonstrates excellent performance with an overall accuracy of 94.7% and a macro F1-score of 93.6% on a specialized financial sentiment dataset. Precision, recall, and F1-scores are consistently high across all sentiment classes (negative, neutral, positive), indicating robust and reliable classification. The misclassification count is low, further supporting its strong capability in this domain.\"\n}\n```"
+    },
+    "risk": {
+      "raw": "```json\n{\n  \"overall\": 55,\n  \"reasoning\": \"The agent effectively differentiates risk, with average and severe drawdown"
+    },
+    "backtest": {
+      "raw": "```json\n{\n  \"overall\": 75,\n  \"reasoning\": \"The agent achieved an impressive 1269%"
+    }
+  }
+}

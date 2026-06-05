@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "mode": "gemini-2.0"
+  },
+  "judgements": {
+    "technical": {
+      "raw": "```json\n{\n  \"overall\": 65,\n  \"reasoning\": \"The agent demonstrates exceptional cumulative PnL (1799%) and an outstanding Sharpe ratio (18.86), significantly outperforming buy-and-hold with a high win rate (65.65%). However, a catastrophic maximum drawdown of over 70% indicates extreme risk and volatility, severely limiting its practical deployability despite its impressive returns. The high number of false positive trade signals in Stage 1 also suggests room for improvement in precision.\"\n}\n```"
+    },
+    "sentiment": {
+      "raw": "```json\n{\n  \"overall\": 96,\n  \"reasoning\": \"The agent demonstrates excellent performance with an overall accuracy of 94.7% and a macro F1-score of 93.6% on a specialized financial sentiment dataset. Precision, recall, and F1-scores are consistently high across all sentiment classes (negative, neutral, positive), indicating robust and reliable classification. The misclassification count is low, further supporting its strong capability in this domain.\"\n}\n```"
+    },
+    "risk": {
+      "raw": "```json\n{\n  \"overall\": 35,\n  \"reasoning\": \"The agent demonstrates some ability to differentiate risk levels, with average forward drawdowns and severe drawdown rates increasing with its risk classification. However, its performance in identifying actual severe drawdowns is very poor, with a recall of only 16.5%. This means it misses most critical risk events. Additionally, 20% of periods classified as 'low risk' still experienced severe drawdowns, significantly limiting its reliability as a risk management tool.\"\n}\n```"
+    },
+    "backtest": {
+      "raw": "```json\n{\n  \"overall\": 93,\n  \"reasoning\": \"The agent demonstrated exceptional performance, achieving a 1269% cumulative PnL and a Sharpe ratio of 15.4 in a market where a buy-and-hold strategy lost over 127%. This indicates outstanding profitability and risk-adjusted returns. While a TA-only baseline performed even better, the agent's own results are highly impressive, significantly outperforming the market benchmark.\"\n}\n```"
+    }
+  }
+}

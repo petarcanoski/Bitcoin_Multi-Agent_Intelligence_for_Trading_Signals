@@ -1,0 +1,555 @@
+{
+  "meta": {
+    "schema": "llm_judge_agent_io_samples_v1",
+    "generated_at_utc": "2026-06-04T22:44:56.534455+00:00",
+    "sample_count": 4,
+    "notes": "Each sample contains actual live agent input context and output for direct LLM judging.",
+    "mode": "gemini-2.5-flash",
+    "input_path": "D:\\#FINKI\\III Godina\\V Semestar\\II Kolokvium\\Obrabotka na prirodni jazici\\Proekt\\Code\\PetarCanoski\\llm_judge_agents\\evaluation_agents_raw_1.json",
+    "output_path": "D:\\#FINKI\\III Godina\\V Semestar\\II Kolokvium\\Obrabotka na prirodni jazici\\Proekt\\Code\\PetarCanoski\\llm_judge_agents\\llm_judgement_agents_v3_live.json"
+  },
+  "samples": [
+    {
+      "sample_id": "technical-20260604170749",
+      "task": "Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.",
+      "question": "Technical Agent: Given latest feature window and model outputs, assess whether signal/confidence/reasoning are coherent and useful.",
+      "metadata": {
+        "agent_name": "technical",
+        "status": "ok",
+        "error": null,
+        "duration_seconds": 3.767,
+        "timestamp_utc": "2026-06-04T17:07:45.965974+00:00"
+      },
+      "input": {
+        "sample_id": "technical-20260604170749",
+        "task": "Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.",
+        "question": "Technical Agent: Given latest feature window and model outputs, assess whether signal/confidence/reasoning are coherent and useful.",
+        "agent_input": {
+          "invocation": {
+            "trade_threshold": 0.45
+          },
+          "data_paths": {
+            "trade_model_path": "D:\\#FINKI\\III Godina\\V Semestar\\II Kolokvium\\Obrabotka na prirodni jazici\\Proekt\\Code\\technical_analysis\\src\\models\\final\\trade\\best_model.pt",
+            "direction_model_path": "D:\\#FINKI\\III Godina\\V Semestar\\II Kolokvium\\Obrabotka na prirodni jazici\\Proekt\\Code\\technical_analysis\\src\\models\\final\\direction\\best_model.pt",
+            "features_path": "D:\\#FINKI\\III Godina\\V Semestar\\II Kolokvium\\Obrabotka na prirodni jazici\\Proekt\\Code\\technical_analysis\\data\\processed\\features_1h.parquet"
+          },
+          "latest_feature_timestamp": "2026-02-22 10:00:00",
+          "expected_behavior": "Output buy/sell/hold with confidence, trade_probability, long_probability, and concise reasoning."
+        },
+        "agent_prediction": {
+          "agent_type": "technical_analysis",
+          "signal": "hold",
+          "confidence": 0.9083300158381462,
+          "trade_probability": 0.09166998416185379,
+          "long_probability": 0.2230844497680664,
+          "sequence_length": 30,
+          "feature_count": 81,
+          "timestamp": "2026-06-04T19:07:49.650605",
+          "reasoning": "Trade model probability is 0.09, below threshold 0.45; technical signal stays HOLD."
+        },
+        "final_agent_prompt": "Judge this agent by the appropriateness of its output for the provided input context and expected behavior.",
+        "reference_answer": null,
+        "metadata": {
+          "agent_name": "technical",
+          "status": "ok",
+          "error": null,
+          "duration_seconds": 3.767,
+          "timestamp_utc": "2026-06-04T17:07:45.965974+00:00"
+        }
+      },
+      "judge": {
+        "parse_status": "ok",
+        "score": 9,
+        "reasoning": "The agent successfully processed the input, generated a clear 'hold' signal with associated probabilities and confidence, and provided concise, coherent reasoning directly linking the trade probability to the defined threshold. All output fields are relevant and useful for a trading system, and the agent's behavior appears functionally sound, meeting the expected output requirements.",
+        "recommendations": [
+          "Consider including the `latest_feature_timestamp` from the input in the agent's output to explicitly confirm the data freshness used for the analysis.",
+          "Add a `model_version` or `model_id` to the output for better traceability, especially since model paths are provided in the input."
+        ],
+        "raw_response": "```json\n{\n  \"score\": 9,\n  \"reasoning\": \"The agent successfully processed the input, generated a clear 'hold' signal with associated probabilities and confidence, and provided concise, coherent reasoning directly linking the trade probability to the defined threshold. All output fields are relevant and useful for a trading system, and the agent's behavior appears functionally sound, meeting the expected output requirements.\",\n  \"recommendations\": [\n    \"Consider including the `latest_feature_timestamp` from the input in the agent's output to explicitly confirm the data freshness used for the analysis.\",\n    \"Add a `model_version` or `model_id` to the output for better traceability, especially since model paths are provided in the input.\"\n  ]\n}\n```"
+      },
+      "judge_prompt": "You are an impartial LLM-as-a-Judge for multi-agent trading systems.\nEvaluate this ONE agent using its actual input context and actual output.\nScore from 1 to 10 for correctness, relevance, usefulness, and whether behavior appears functionally sound for this agent role.\nIf the sample status is error/failure, score low and explain the failure impact.\nReturn STRICT JSON only matching this schema:\n{\n  \"score\": \"integer 1-10\",\n  \"reasoning\": \"concise explanation\",\n  \"recommendations\": [\n    \"short actionable recommendation\",\n    \"...\",\n    \"...\"\n  ]\n}\n\nAgent sample:\n{\n  \"task\": \"Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.\",\n  \"question\": \"Technical Agent: Given latest feature window and model outputs, assess whether signal/confidence/reasoning are coherent and useful.\",\n  \"agent_input\": {\n    \"invocation\": {\n      \"trade_threshold\": 0.45\n    },\n    \"data_paths\": {\n      \"trade_model_path\": \"D:\\\\#FINKI\\\\III Godina\\\\V Semestar\\\\II Kolokvium\\\\Obrabotka na prirodni jazici\\\\Proekt\\\\Code\\\\technical_analysis\\\\src\\\\models\\\\final\\\\trade\\\\best_model.pt\",\n      \"direction_model_path\": \"D:\\\\#FINKI\\\\III Godina\\\\V Semestar\\\\II Kolokvium\\\\Obrabotka na prirodni jazici\\\\Proekt\\\\Code\\\\technical_analysis\\\\src\\\\models\\\\final\\\\direction\\\\best_model.pt\",\n      \"features_path\": \"D:\\\\#FINKI\\\\III Godina\\\\V Semestar\\\\II Kolokvium\\\\Obrabotka na prirodni jazici\\\\Proekt\\\\Code\\\\technical_analysis\\\\data\\\\processed\\\\features_1h.parquet\"\n    },\n    \"latest_feature_timestamp\": \"2026-02-22 10:00:00\",\n    \"expected_behavior\": \"Output buy/sell/hold with confidence, trade_probability, long_probability, and concise reasoning.\"\n  },\n  \"agent_prediction\": {\n    \"agent_type\": \"technical_analysis\",\n    \"signal\": \"hold\",\n    \"confidence\": 0.9083300158381462,\n    \"trade_probability\": 0.09166998416185379,\n    \"long_probability\": 0.2230844497680664,\n    \"sequence_length\": 30,\n    \"feature_count\": 81,\n    \"timestamp\": \"2026-06-04T19:07:49.650605\",\n    \"reasoning\": \"Trade model probability is 0.09, below threshold 0.45; technical signal stays HOLD.\"\n  },\n  \"reference_answer\": null,\n  \"metadata\": {\n    \"agent_name\": \"technical\",\n    \"status\": \"ok\",\n    \"error\": null,\n    \"duration_seconds\": 3.767,\n    \"timestamp_utc\": \"2026-06-04T17:07:45.965974+00:00\"\n  }\n}"
+    },
+    {
+      "sample_id": "sentiment-20260604170814",
+      "task": "Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.",
+      "question": "Sentiment Agent: Given recent sentiment and macro sources, assess whether output signal/confidence/reasoning are plausible and aligned.",
+      "metadata": {
+        "agent_name": "sentiment",
+        "status": "ok",
+        "error": null,
+        "duration_seconds": 24.274,
+        "timestamp_utc": "2026-06-04T17:07:49.732580+00:00"
+      },
+      "input": {
+        "sample_id": "sentiment-20260604170814",
+        "task": "Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.",
+        "question": "Sentiment Agent: Given recent sentiment and macro sources, assess whether output signal/confidence/reasoning are plausible and aligned.",
+        "agent_input": {
+          "invocation": {
+            "days_back": 3
+          },
+          "entrypoint": "sentiment_analysis/run_agent_json.py",
+          "expected_behavior": "Fetch recent crypto/news+macro context, output buy/sell/hold with confidence and reasoning."
+        },
+        "agent_prediction": {
+          "agent_type": "sentiment_analysis",
+          "signal": "hold",
+          "confidence": 0.5353049229469041,
+          "sentiment_score": -0.1628663653179928,
+          "news_sentiment": 0.0,
+          "twitter_sentiment": 0.20711211560669054,
+          "macro_score": -0.75,
+          "key_factors": [
+            "Positive Twitter/X sentiment from @WatcherGuru",
+            "Unfavorable macroeconomic conditions"
+          ],
+          "reasoning": "**HOLD Signal:**\n\nBased on the current data, we're advising traders to hold their positions in Bitcoin due to a mixed sentiment landscape and negative macroeconomic indicators. The low news sentiment score and negative macroeconomic indicators are offset by a relatively bullish community sentiment and a moderate Twitter/X sentiment score. Investors should be cautious of the recent price drop and watch for improvements in macroeconomic indicators before considering new buys. \n\n**Key drivers:**\n\n1. **Negative macroeconomic indicators (-0.750)**: Current economic conditions are weighing on the market, causing a HOLD signal.\n2. **Mixed sentiment scores**: Low news sentiment and moderate Twitter/X sentiment scores create uncertainty, leading to a cautious approach.\n3. **Community bullish sentiment (54%)**: Despite the negative indicators, the community remains somewhat optimistic, preventing a more bearish signal.\n\n**What to watch:**\n\n1. **Macroeconomic indicators**: Improvements in these indicators could shift the signal to BUY.\n2. **Price action**: A sustained Bitcoin price drop could lead to a SELL signal.\n3. **Community sentiment**: A significant shift in community sentiment could influence the signal.",
+          "timestamp": "2026-06-04T19:08:12.720743",
+          "data_sources": [
+            "NewsAPI",
+            "Twitter/X",
+            "AlphaVantage",
+            "CoinGecko"
+          ]
+        },
+        "final_agent_prompt": "Judge this agent by the appropriateness of its output for the provided input context and expected behavior.",
+        "reference_answer": null,
+        "metadata": {
+          "agent_name": "sentiment",
+          "status": "ok",
+          "error": null,
+          "duration_seconds": 24.274,
+          "timestamp_utc": "2026-06-04T17:07:49.732580+00:00"
+        }
+      },
+      "judge": {
+        "parse_status": "ok",
+        "score": 9,
+        "reasoning": "The agent successfully generated a plausible 'hold' signal with moderate confidence, supported by clear and consistent reasoning that integrates mixed sentiment scores (neutral news, positive Twitter) with strong negative macroeconomic indicators. The output is well-structured, relevant, and provides useful insights into the key drivers and future watch points. The signal, confidence, and reasoning are well-aligned with the provided sentiment and macro scores.",
+        "recommendations": [
+          "Ensure all specific sentiment components mentioned in the reasoning (e.g., 'Community bullish sentiment') are explicitly represented as distinct scores in the output if they are primary drivers, or clarify how they relate to existing scores like 'twitter_sentiment'.",
+          "Consider adding a brief summary of the overall market context (e.g., 'recent price drop' mentioned in reasoning) as a distinct data point if it's a significant factor influencing the signal, to provide more complete context."
+        ],
+        "raw_response": "```json\n{\n  \"score\": 9,\n  \"reasoning\": \"The agent successfully generated a plausible 'hold' signal with moderate confidence, supported by clear and consistent reasoning that integrates mixed sentiment scores (neutral news, positive Twitter) with strong negative macroeconomic indicators. The output is well-structured, relevant, and provides useful insights into the key drivers and future watch points. The signal, confidence, and reasoning are well-aligned with the provided sentiment and macro scores.\",\n  \"recommendations\": [\n    \"Ensure all specific sentiment components mentioned in the reasoning (e.g., 'Community bullish sentiment') are explicitly represented as distinct scores in the output if they are primary drivers, or clarify how they relate to existing scores like 'twitter_sentiment'.\",\n    \"Consider adding a brief summary of the overall market context (e.g., 'recent price drop' mentioned in reasoning) as a distinct data point if it's a significant factor influencing the signal, to provide more complete context.\"\n  ]\n}\n```"
+      },
+      "judge_prompt": "You are an impartial LLM-as-a-Judge for multi-agent trading systems.\nEvaluate this ONE agent using its actual input context and actual output.\nScore from 1 to 10 for correctness, relevance, usefulness, and whether behavior appears functionally sound for this agent role.\nIf the sample status is error/failure, score low and explain the failure impact.\nReturn STRICT JSON only matching this schema:\n{\n  \"score\": \"integer 1-10\",\n  \"reasoning\": \"concise explanation\",\n  \"recommendations\": [\n    \"short actionable recommendation\",\n    \"...\",\n    \"...\"\n  ]\n}\n\nAgent sample:\n{\n  \"task\": \"Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.\",\n  \"question\": \"Sentiment Agent: Given recent sentiment and macro sources, assess whether output signal/confidence/reasoning are plausible and aligned.\",\n  \"agent_input\": {\n    \"invocation\": {\n      \"days_back\": 3\n    },\n    \"entrypoint\": \"sentiment_analysis/run_agent_json.py\",\n    \"expected_behavior\": \"Fetch recent crypto/news+macro context, output buy/sell/hold with confidence and reasoning.\"\n  },\n  \"agent_prediction\": {\n    \"agent_type\": \"sentiment_analysis\",\n    \"signal\": \"hold\",\n    \"confidence\": 0.5353049229469041,\n    \"sentiment_score\": -0.1628663653179928,\n    \"news_sentiment\": 0.0,\n    \"twitter_sentiment\": 0.20711211560669054,\n    \"macro_score\": -0.75,\n    \"key_factors\": [\n      \"Positive Twitter/X sentiment from @WatcherGuru\",\n      \"Unfavorable macroeconomic conditions\"\n    ],\n    \"reasoning\": \"**HOLD Signal:**\\n\\nBased on the current data, we're advising traders to hold their positions in Bitcoin due to a mixed sentiment landscape and negative macroeconomic indicators. The low news sentiment score and negative macroeconomic indicators are offset by a relatively bullish community sentiment and a moderate Twitter/X sentiment score. Investors should be cautious of the recent price drop and watch for improvements in macroeconomic indicators before considering new buys. \\n\\n**Key drivers:**\\n\\n1. **Negative macroeconomic indicators (-0.750)**: Current economic conditions are weighing on the market, causing a HOLD signal.\\n2. **Mixed sentiment scores**: Low news sentiment and moderate Twitter/X sentiment scores create uncertainty, leading to a cautious approach.\\n3. **Community bullish sentiment (54%)**: Despite the negative indicators, the community remains somewhat optimistic, preventing a more bearish signal.\\n\\n**What to watch:**\\n\\n1. **Macroeconomic indicators**: Improvements in these indicators could shift the signal to BUY.\\n2. **Price action**: A sustained Bitcoin price drop could lead to a SELL signal.\\n3. **Community sentiment**: A significant shift in community sentiment could influence the signal.\",\n    \"timestamp\": \"2026-06-04T19:08:12.720743\",\n    \"data_sources\": [\n      \"NewsAPI\",\n      \"Twitter/X\",\n      \"AlphaVantage\",\n      \"CoinGecko\"\n    ]\n  },\n  \"reference_answer\": null,\n  \"metadata\": {\n    \"agent_name\": \"sentiment\",\n    \"status\": \"ok\",\n    \"error\": null,\n    \"duration_seconds\": 24.274,\n    \"timestamp_utc\": \"2026-06-04T17:07:49.732580+00:00\"\n  }\n}"
+    },
+    {
+      "sample_id": "risk-20260604170827",
+      "task": "Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.",
+      "question": "Risk Agent: Given on-chain/geopolitical or model-based risk inputs, assess whether risk level and explanation are coherent and useful.",
+      "metadata": {
+        "agent_name": "risk",
+        "status": "ok",
+        "error": null,
+        "duration_seconds": 13.705,
+        "timestamp_utc": "2026-06-04T17:08:14.006348+00:00"
+      },
+      "input": {
+        "sample_id": "risk-20260604170827",
+        "task": "Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.",
+        "question": "Risk Agent: Given on-chain/geopolitical or model-based risk inputs, assess whether risk level and explanation are coherent and useful.",
+        "agent_input": {
+          "invocation": {
+            "geopolitical_days_back": 14
+          },
+          "entrypoint": "agent_risk/run_agent_json.py",
+          "expected_behavior": "Output low_risk/medium_risk/high_risk with confidence, risk scores, and reasoning."
+        },
+        "agent_prediction": {
+          "agent_type": "risk_volatility",
+          "signal": "medium_risk",
+          "confidence": 0.7142857142857143,
+          "risk_score": 0.5356666666666666,
+          "onchain_risk": 0.6,
+          "geopolitical_risk": 0.43916666666666665,
+          "volatility_score": 0.44999999999999996,
+          "key_risks": [
+            "High transaction volume risk",
+            "High hash rate risk",
+            "Critical: Political Instability in middle_east",
+            "Critical: Political Instability in usa"
+          ],
+          "key_opportunities": [
+            "Limited clear opportunities in current environment"
+          ],
+          "onchain_metrics": [
+            {
+              "metric_type": "transaction_volume",
+              "value": 855794934.3632001,
+              "timestamp": "2026-06-04T19:08:16.743986",
+              "change_24h": null,
+              "change_7d": null,
+              "risk_level": "high"
+            },
+            {
+              "metric_type": "hash_rate",
+              "value": 884161057735.7113,
+              "timestamp": "2026-06-04T19:08:18.438109",
+              "change_24h": null,
+              "change_7d": null,
+              "risk_level": "high"
+            },
+            {
+              "metric_type": "mempool_size",
+              "value": 0.0,
+              "timestamp": "2026-06-04T19:08:19.974706",
+              "change_24h": null,
+              "change_7d": null,
+              "risk_level": "low"
+            }
+          ],
+          "geopolitical_events": [
+            {
+              "event_type": "political_instability",
+              "title": "Steven Spielberg on his faith in alien life, the future of the movies and the power of empathy",
+              "description": "Steven Spielberg's “Disclosure Day” returns Hollywood’s preeminent big-screen craftsman to one of his most abiding questions: Are we alone",
+              "region": "other",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:08:13Z",
+              "source": "Abcnews.com"
+            },
+            {
+              "event_type": "war",
+              "title": "Netanyahu downplays US-Israel rift after Trump confirms criticism",
+              "description": "US president acknowledges he had harsh words for Netanyahu over Lebanon attacks but says he 'likes' the Israeli leader.",
+              "region": "usa",
+              "severity": "high",
+              "impact_on_crypto": "negative",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:07:43Z",
+              "source": "Al Jazeera English"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "Ukrainian drones hit St. Petersburg oil terminal before city hosts Russian economic forum",
+              "description": "Ukrainian long-range drones struck an oil terminal in St. Petersburg and set it ablaze, President Volodymyr Zelenskyy said Wednesday, sending smoke billowing over the city where President Vladimir Putin was born as it hosts Russia's leading event for attracti…",
+              "region": "usa",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:06:25Z",
+              "source": "CBC News"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "Now Hear This: June 2026",
+              "description": "Now Hear This is a monthly A&R column that provides you with exciting new sounds we discovered through the innovative new music discovery platform Groover. Each month, you can expect a varied bouillabaisse of songs from a vast spectrum of artists from all ove…",
+              "region": "usa",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:05:48Z",
+              "source": "Spinmagazine.com"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "What’s Really Behind Peter Thiel’s Panicked Move to Argentina",
+              "description": "David Futrelle\n\n\n\nSome tech observers think that the Palantir overlord sees the end times coming, but his real motivation is likely much more mundane and self-interested.\r\n\n\r\n\n\nThe post What’s Really Behind Peter Thiel’s Panicked Move to Argentina appeared fi…",
+              "region": "other",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:05:46Z",
+              "source": "Thenation.com"
+            },
+            {
+              "event_type": "war",
+              "title": "Netanyahu downplays US-Israel rift after Trump confirms criticism",
+              "description": "US president acknowledges he had harsh words for Netanyahu over Lebanon attacks but says he 'likes' the Israeli leader.",
+              "region": "usa",
+              "severity": "high",
+              "impact_on_crypto": "negative",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:07:43Z",
+              "source": "Al Jazeera English"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "'The Joke Is On Us': Hina Khan Calls Shilpa Shinde's False Sexual Harassment Allegation 'Absolutely Shameful', Says Sanjay Kohli Is The 'Real Victim'",
+              "description": "Hina Khan said she was left \"shocked beyond words\" after Shilpa Shinde admitted that her sexual harassment allegation against producer Sanjay Kohli was false. Calling the act \"absolutely shameful,\" Hina claimed Kohli was the \"real victim\" and ended her note b…",
+              "region": "usa",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:06:14Z",
+              "source": "Free Press Journal"
+            },
+            {
+              "event_type": "war",
+              "title": "Treasury Sec. Attacks Elizabeth Warren in Freakout Over Trump’s Stocks",
+              "description": "Treasury Secretary Scott Bessent repeatedly refused to acknowledge Donald Trump’s blatantly corrupt stock trading under fierce questioning by Senator Elizabeth Warren on Wednesday. During a Senate Finance Committee hearing, Warren hammered Bessent for pushing…",
+              "region": "usa",
+              "severity": "high",
+              "impact_on_crypto": "negative",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:02:07Z",
+              "source": "The New Republic"
+            },
+            {
+              "event_type": "sanctions",
+              "title": "Trump confirms ‘crazy’ Netanyahu clash as questions mount over push to hold fire on Hezbollah terrorists",
+              "description": "Trump confirmed calling Netanyahu 'f***ing crazy' during a heated phone call over Israel's military operations in Lebanon, exposing a rare rift.",
+              "region": "usa",
+              "severity": "low",
+              "impact_on_crypto": "negative",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:01:44Z",
+              "source": "Fox News"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "Home prices post record drop as buyers rush back into a suddenly ‘cheaper’ market",
+              "description": "America's red-hot housing market may finally be coming back down to Earth, according to a new report from Realtor.com.",
+              "region": "usa",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:01:19Z",
+              "source": "New York Post"
+            },
+            {
+              "event_type": "war",
+              "title": "Russian officials warn Putin that war spending risks triggering a budget crisis",
+              "description": "Russia's unsustainable war spending could lead to a budget crisis, impacting global crypto markets through increased regulatory scrutiny.\nThe post Russian officials warn Putin that war spending risks triggering a budget crisis appeared first on Crypto Briefin…",
+              "region": "usa",
+              "severity": "high",
+              "impact_on_crypto": "negative",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:05:37Z",
+              "source": "Crypto Briefing"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "PM call with President Volodymyr Zelenskyy of Ukraine: 3 June 2026",
+              "description": "The Prime Minister held a virtual meeting with the President of Ukraine Volodymyr Zelenskyy this afternoon.",
+              "region": "other",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:02:48Z",
+              "source": "Www.gov.uk"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "Trump says Iran agrees not to pursue nuclear weapons, crypto markets weigh geopolitical ripple effects",
+              "description": "The potential de-escalation could stabilize global markets and crypto, but skepticism remains due to past diplomatic failures and unresolved issues.\nThe post Trump says Iran agrees not to pursue nuclear weapons, crypto markets weigh geopolitical ripple effect…",
+              "region": "middle_east",
+              "severity": "critical",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T16:56:58Z",
+              "source": "Crypto Briefing"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "FBI arrests Jamshid Ghomi at $35M mansion for allegedly selling US tech to Iran’s military and nuclear programs",
+              "description": "The unverified claims highlight the risks of misinformation impacting public perception and trust in media and legal processes.\nThe post FBI arrests Jamshid Ghomi at $35M mansion for allegedly selling US tech to Iran’s military and nuclear programs appeared f…",
+              "region": "usa",
+              "severity": "critical",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T16:53:41Z",
+              "source": "Crypto Briefing"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "Colombian presidential candidate de la Espriella thanks Trump for endorsing his campaign",
+              "description": "Colombian lawyer and presidential candidate, Abelardo de la Espriella, has thanked U.S. President Donald Trump for endorsing his campaign",
+              "region": "other",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:07:59Z",
+              "source": "Abcnews.com"
+            },
+            {
+              "event_type": "war",
+              "title": "Netanyahu downplays US-Israel rift after Trump confirms criticism",
+              "description": "US president acknowledges he had harsh words for Netanyahu over Lebanon attacks but says he 'likes' the Israeli leader.",
+              "region": "usa",
+              "severity": "high",
+              "impact_on_crypto": "negative",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:07:43Z",
+              "source": "Al Jazeera English"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "Ukrainian drones hit St. Petersburg oil terminal before city hosts Russian economic forum",
+              "description": "Ukrainian long-range drones struck an oil terminal in St. Petersburg and set it ablaze, President Volodymyr Zelenskyy said Wednesday, sending smoke billowing over the city where President Vladimir Putin was born as it hosts Russia's leading event for attracti…",
+              "region": "usa",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:06:25Z",
+              "source": "CBC News"
+            },
+            {
+              "event_type": "war",
+              "title": "Russian officials warn Putin that war spending risks triggering a budget crisis",
+              "description": "Russia's unsustainable war spending could lead to a budget crisis, impacting global crypto markets through increased regulatory scrutiny.\nThe post Russian officials warn Putin that war spending risks triggering a budget crisis appeared first on Crypto Briefin…",
+              "region": "usa",
+              "severity": "high",
+              "impact_on_crypto": "negative",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:05:37Z",
+              "source": "Crypto Briefing"
+            },
+            {
+              "event_type": "war",
+              "title": "Donald Trump Is All But Inviting A Terrorist Attack",
+              "description": "Trump’s latest counterterrorism picks are so shockingly unqualified and unfit they make Trump’s unqualified, unfit cabinet look good.\nOn Tuesday, Donald Trump announced that loyalist housing official and professional troll Bill Pulte, who lacks a single known…",
+              "region": "usa",
+              "severity": "high",
+              "impact_on_crypto": "negative",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:03:12Z",
+              "source": "Crooksandliars.com"
+            },
+            {
+              "event_type": "political_instability",
+              "title": "Atiku backs CAN’s security reform demand, asks Muslim leaders to join campaign",
+              "description": "Atiku Abubakar supports CAN’s call for urgent security reforms and asks Muslim leaders to join the campaign against Nigeria’s worsening insecurity.\n\nRead More: https://punchng.com/atiku-backs-cans-security-reform-demand-asks-muslim-leaders-to-join-campaign/",
+              "region": "usa",
+              "severity": "low",
+              "impact_on_crypto": "neutral",
+              "confidence": 0.7,
+              "timestamp": "2026-06-03T17:07:57Z",
+              "source": "The Punch"
+            }
+          ],
+          "volatility_metrics": [],
+          "reasoning": "MEDIUM RISK signal generated with combined risk score of 0.54. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.44. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.",
+          "timestamp": "2026-06-04T19:08:27.605896",
+          "data_sources": [
+            "Blockchain.info",
+            "NewsAPI",
+            "On-Chain Analysis"
+          ]
+        },
+        "final_agent_prompt": "Judge this agent by the appropriateness of its output for the provided input context and expected behavior.",
+        "reference_answer": null,
+        "metadata": {
+          "agent_name": "risk",
+          "status": "ok",
+          "error": null,
+          "duration_seconds": 13.705,
+          "timestamp_utc": "2026-06-04T17:08:14.006348+00:00"
+        }
+      },
+      "judge": {
+        "parse_status": "ok",
+        "score": 6,
+        "reasoning": "The agent successfully generated a risk signal and associated scores, adhering to the expected output format. On-chain risk assessment appears coherent and correctly identifies high transaction volume and hash rate risks. However, the geopolitical risk assessment is significantly flawed due to the inclusion of numerous irrelevant news articles (e.g., celebrity gossip, movie reviews, music columns) categorized as 'geopolitical events.' This dilutes the actual risk signal and makes the detailed explanation less useful and trustworthy. Additionally, the `volatility_metrics` list is empty despite a `volatility_score` being provided, indicating a potential inconsistency or missing data in the output.",
+        "recommendations": [
+          "Implement stricter filtering or a more sophisticated classification model for geopolitical events to ensure only genuinely relevant events are included.",
+          "Clarify or provide the underlying metrics for the `volatility_score` if `volatility_metrics` is intended to be populated.",
+          "Review the `impact_on_crypto` and `severity` assessment for geopolitical events to ensure accuracy and relevance to financial markets."
+        ],
+        "raw_response": "```json\n{\n  \"score\": 6,\n  \"reasoning\": \"The agent successfully generated a risk signal and associated scores, adhering to the expected output format. On-chain risk assessment appears coherent and correctly identifies high transaction volume and hash rate risks. However, the geopolitical risk assessment is significantly flawed due to the inclusion of numerous irrelevant news articles (e.g., celebrity gossip, movie reviews, music columns) categorized as 'geopolitical events.' This dilutes the actual risk signal and makes the detailed explanation less useful and trustworthy. Additionally, the `volatility_metrics` list is empty despite a `volatility_score` being provided, indicating a potential inconsistency or missing data in the output.\",\n  \"recommendations\": [\n    \"Implement stricter filtering or a more sophisticated classification model for geopolitical events to ensure only genuinely relevant events are included.\",\n    \"Clarify or provide the underlying metrics for the `volatility_score` if `volatility_metrics` is intended to be populated.\",\n    \"Review the `impact_on_crypto` and `severity` assessment for geopolitical events to ensure accuracy and relevance to financial markets.\"\n  ]\n}\n```"
+      },
+      "judge_prompt": "You are an impartial LLM-as-a-Judge for multi-agent trading systems.\nEvaluate this ONE agent using its actual input context and actual output.\nScore from 1 to 10 for correctness, relevance, usefulness, and whether behavior appears functionally sound for this agent role.\nIf the sample status is error/failure, score low and explain the failure impact.\nReturn STRICT JSON only matching this schema:\n{\n  \"score\": \"integer 1-10\",\n  \"reasoning\": \"concise explanation\",\n  \"recommendations\": [\n    \"short actionable recommendation\",\n    \"...\",\n    \"...\"\n  ]\n}\n\nAgent sample:\n{\n  \"task\": \"Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.\",\n  \"question\": \"Risk Agent: Given on-chain/geopolitical or model-based risk inputs, assess whether risk level and explanation are coherent and useful.\",\n  \"agent_input\": {\n    \"invocation\": {\n      \"geopolitical_days_back\": 14\n    },\n    \"entrypoint\": \"agent_risk/run_agent_json.py\",\n    \"expected_behavior\": \"Output low_risk/medium_risk/high_risk with confidence, risk scores, and reasoning.\"\n  },\n  \"agent_prediction\": {\n    \"agent_type\": \"risk_volatility\",\n    \"signal\": \"medium_risk\",\n    \"confidence\": 0.7142857142857143,\n    \"risk_score\": 0.5356666666666666,\n    \"onchain_risk\": 0.6,\n    \"geopolitical_risk\": 0.43916666666666665,\n    \"volatility_score\": 0.44999999999999996,\n    \"key_risks\": [\n      \"High transaction volume risk\",\n      \"High hash rate risk\",\n      \"Critical: Political Instability in middle_east\",\n      \"Critical: Political Instability in usa\"\n    ],\n    \"key_opportunities\": [\n      \"Limited clear opportunities in current environment\"\n    ],\n    \"onchain_metrics\": [\n      {\n        \"metric_type\": \"transaction_volume\",\n        \"value\": 855794934.3632001,\n        \"timestamp\": \"2026-06-04T19:08:16.743986\",\n        \"change_24h\": null,\n        \"change_7d\": null,\n        \"risk_level\": \"high\"\n      },\n      {\n        \"metric_type\": \"hash_rate\",\n        \"value\": 884161057735.7113,\n        \"timestamp\": \"2026-06-04T19:08:18.438109\",\n        \"change_24h\": null,\n        \"change_7d\": null,\n        \"risk_level\": \"high\"\n      },\n      {\n        \"metric_type\": \"mempool_size\",\n        \"value\": 0.0,\n        \"timestamp\": \"2026-06-04T19:08:19.974706\",\n        \"change_24h\": null,\n        \"change_7d\": null,\n        \"risk_level\": \"low\"\n      }\n    ],\n    \"geopolitical_events\": [\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"Steven Spielberg on his faith in alien life, the future of the movies and the power of empathy\",\n        \"description\": \"Steven Spielberg's “Disclosure Day” returns Hollywood’s preeminent big-screen craftsman to one of his most abiding questions: Are we alone\",\n        \"region\": \"other\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:08:13Z\",\n        \"source\": \"Abcnews.com\"\n      },\n      {\n        \"event_type\": \"war\",\n        \"title\": \"Netanyahu downplays US-Israel rift after Trump confirms criticism\",\n        \"description\": \"US president acknowledges he had harsh words for Netanyahu over Lebanon attacks but says he 'likes' the Israeli leader.\",\n        \"region\": \"usa\",\n        \"severity\": \"high\",\n        \"impact_on_crypto\": \"negative\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:07:43Z\",\n        \"source\": \"Al Jazeera English\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"Ukrainian drones hit St. Petersburg oil terminal before city hosts Russian economic forum\",\n        \"description\": \"Ukrainian long-range drones struck an oil terminal in St. Petersburg and set it ablaze, President Volodymyr Zelenskyy said Wednesday, sending smoke billowing over the city where President Vladimir Putin was born as it hosts Russia's leading event for attracti…\",\n        \"region\": \"usa\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:06:25Z\",\n        \"source\": \"CBC News\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"Now Hear This: June 2026\",\n        \"description\": \"Now Hear This is a monthly A&R column that provides you with exciting new sounds we discovered through the innovative new music discovery platform Groover. Each month, you can expect a varied bouillabaisse of songs from a vast spectrum of artists from all ove…\",\n        \"region\": \"usa\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:05:48Z\",\n        \"source\": \"Spinmagazine.com\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"What’s Really Behind Peter Thiel’s Panicked Move to Argentina\",\n        \"description\": \"David Futrelle\\n\\n\\n\\nSome tech observers think that the Palantir overlord sees the end times coming, but his real motivation is likely much more mundane and self-interested.\\r\\n\\n\\r\\n\\n\\nThe post What’s Really Behind Peter Thiel’s Panicked Move to Argentina appeared fi…\",\n        \"region\": \"other\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:05:46Z\",\n        \"source\": \"Thenation.com\"\n      },\n      {\n        \"event_type\": \"war\",\n        \"title\": \"Netanyahu downplays US-Israel rift after Trump confirms criticism\",\n        \"description\": \"US president acknowledges he had harsh words for Netanyahu over Lebanon attacks but says he 'likes' the Israeli leader.\",\n        \"region\": \"usa\",\n        \"severity\": \"high\",\n        \"impact_on_crypto\": \"negative\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:07:43Z\",\n        \"source\": \"Al Jazeera English\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"'The Joke Is On Us': Hina Khan Calls Shilpa Shinde's False Sexual Harassment Allegation 'Absolutely Shameful', Says Sanjay Kohli Is The 'Real Victim'\",\n        \"description\": \"Hina Khan said she was left \\\"shocked beyond words\\\" after Shilpa Shinde admitted that her sexual harassment allegation against producer Sanjay Kohli was false. Calling the act \\\"absolutely shameful,\\\" Hina claimed Kohli was the \\\"real victim\\\" and ended her note b…\",\n        \"region\": \"usa\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:06:14Z\",\n        \"source\": \"Free Press Journal\"\n      },\n      {\n        \"event_type\": \"war\",\n        \"title\": \"Treasury Sec. Attacks Elizabeth Warren in Freakout Over Trump’s Stocks\",\n        \"description\": \"Treasury Secretary Scott Bessent repeatedly refused to acknowledge Donald Trump’s blatantly corrupt stock trading under fierce questioning by Senator Elizabeth Warren on Wednesday. During a Senate Finance Committee hearing, Warren hammered Bessent for pushing…\",\n        \"region\": \"usa\",\n        \"severity\": \"high\",\n        \"impact_on_crypto\": \"negative\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:02:07Z\",\n        \"source\": \"The New Republic\"\n      },\n      {\n        \"event_type\": \"sanctions\",\n        \"title\": \"Trump confirms ‘crazy’ Netanyahu clash as questions mount over push to hold fire on Hezbollah terrorists\",\n        \"description\": \"Trump confirmed calling Netanyahu 'f***ing crazy' during a heated phone call over Israel's military operations in Lebanon, exposing a rare rift.\",\n        \"region\": \"usa\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"negative\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:01:44Z\",\n        \"source\": \"Fox News\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"Home prices post record drop as buyers rush back into a suddenly ‘cheaper’ market\",\n        \"description\": \"America's red-hot housing market may finally be coming back down to Earth, according to a new report from Realtor.com.\",\n        \"region\": \"usa\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:01:19Z\",\n        \"source\": \"New York Post\"\n      },\n      {\n        \"event_type\": \"war\",\n        \"title\": \"Russian officials warn Putin that war spending risks triggering a budget crisis\",\n        \"description\": \"Russia's unsustainable war spending could lead to a budget crisis, impacting global crypto markets through increased regulatory scrutiny.\\nThe post Russian officials warn Putin that war spending risks triggering a budget crisis appeared first on Crypto Briefin…\",\n        \"region\": \"usa\",\n        \"severity\": \"high\",\n        \"impact_on_crypto\": \"negative\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:05:37Z\",\n        \"source\": \"Crypto Briefing\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"PM call with President Volodymyr Zelenskyy of Ukraine: 3 June 2026\",\n        \"description\": \"The Prime Minister held a virtual meeting with the President of Ukraine Volodymyr Zelenskyy this afternoon.\",\n        \"region\": \"other\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:02:48Z\",\n        \"source\": \"Www.gov.uk\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"Trump says Iran agrees not to pursue nuclear weapons, crypto markets weigh geopolitical ripple effects\",\n        \"description\": \"The potential de-escalation could stabilize global markets and crypto, but skepticism remains due to past diplomatic failures and unresolved issues.\\nThe post Trump says Iran agrees not to pursue nuclear weapons, crypto markets weigh geopolitical ripple effect…\",\n        \"region\": \"middle_east\",\n        \"severity\": \"critical\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T16:56:58Z\",\n        \"source\": \"Crypto Briefing\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"FBI arrests Jamshid Ghomi at $35M mansion for allegedly selling US tech to Iran’s military and nuclear programs\",\n        \"description\": \"The unverified claims highlight the risks of misinformation impacting public perception and trust in media and legal processes.\\nThe post FBI arrests Jamshid Ghomi at $35M mansion for allegedly selling US tech to Iran’s military and nuclear programs appeared f…\",\n        \"region\": \"usa\",\n        \"severity\": \"critical\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T16:53:41Z\",\n        \"source\": \"Crypto Briefing\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"Colombian presidential candidate de la Espriella thanks Trump for endorsing his campaign\",\n        \"description\": \"Colombian lawyer and presidential candidate, Abelardo de la Espriella, has thanked U.S. President Donald Trump for endorsing his campaign\",\n        \"region\": \"other\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:07:59Z\",\n        \"source\": \"Abcnews.com\"\n      },\n      {\n        \"event_type\": \"war\",\n        \"title\": \"Netanyahu downplays US-Israel rift after Trump confirms criticism\",\n        \"description\": \"US president acknowledges he had harsh words for Netanyahu over Lebanon attacks but says he 'likes' the Israeli leader.\",\n        \"region\": \"usa\",\n        \"severity\": \"high\",\n        \"impact_on_crypto\": \"negative\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:07:43Z\",\n        \"source\": \"Al Jazeera English\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"Ukrainian drones hit St. Petersburg oil terminal before city hosts Russian economic forum\",\n        \"description\": \"Ukrainian long-range drones struck an oil terminal in St. Petersburg and set it ablaze, President Volodymyr Zelenskyy said Wednesday, sending smoke billowing over the city where President Vladimir Putin was born as it hosts Russia's leading event for attracti…\",\n        \"region\": \"usa\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:06:25Z\",\n        \"source\": \"CBC News\"\n      },\n      {\n        \"event_type\": \"war\",\n        \"title\": \"Russian officials warn Putin that war spending risks triggering a budget crisis\",\n        \"description\": \"Russia's unsustainable war spending could lead to a budget crisis, impacting global crypto markets through increased regulatory scrutiny.\\nThe post Russian officials warn Putin that war spending risks triggering a budget crisis appeared first on Crypto Briefin…\",\n        \"region\": \"usa\",\n        \"severity\": \"high\",\n        \"impact_on_crypto\": \"negative\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:05:37Z\",\n        \"source\": \"Crypto Briefing\"\n      },\n      {\n        \"event_type\": \"war\",\n        \"title\": \"Donald Trump Is All But Inviting A Terrorist Attack\",\n        \"description\": \"Trump’s latest counterterrorism picks are so shockingly unqualified and unfit they make Trump’s unqualified, unfit cabinet look good.\\nOn Tuesday, Donald Trump announced that loyalist housing official and professional troll Bill Pulte, who lacks a single known…\",\n        \"region\": \"usa\",\n        \"severity\": \"high\",\n        \"impact_on_crypto\": \"negative\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:03:12Z\",\n        \"source\": \"Crooksandliars.com\"\n      },\n      {\n        \"event_type\": \"political_instability\",\n        \"title\": \"Atiku backs CAN’s security reform demand, asks Muslim leaders to join campaign\",\n        \"description\": \"Atiku Abubakar supports CAN’s call for urgent security reforms and asks Muslim leaders to join the campaign against Nigeria’s worsening insecurity.\\n\\nRead More: https://punchng.com/atiku-backs-cans-security-reform-demand-asks-muslim-leaders-to-join-campaign/\",\n        \"region\": \"usa\",\n        \"severity\": \"low\",\n        \"impact_on_crypto\": \"neutral\",\n        \"confidence\": 0.7,\n        \"timestamp\": \"2026-06-03T17:07:57Z\",\n        \"source\": \"The Punch\"\n      }\n    ],\n    \"volatility_metrics\": [],\n    \"reasoning\": \"MEDIUM RISK signal generated with combined risk score of 0.54. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.44. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.\",\n    \"timestamp\": \"2026-06-04T19:08:27.605896\",\n    \"data_sources\": [\n      \"Blockchain.info\",\n      \"NewsAPI\",\n      \"On-Chain Analysis\"\n    ]\n  },\n  \"reference_answer\": null,\n  \"metadata\": {\n    \"agent_name\": \"risk\",\n    \"status\": \"ok\",\n    \"error\": null,\n    \"duration_seconds\": 13.705,\n    \"timestamp_utc\": \"2026-06-04T17:08:14.006348+00:00\"\n  }\n}"
+    },
+    {
+      "sample_id": "coordinator-20260604170904",
+      "task": "Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.",
+      "question": "Coordinator Agent: Given sub-agent signals, assess whether final fused decision is coherent, risk-aware, and operationally useful.",
+      "metadata": {
+        "agent_name": "coordinator",
+        "status": "ok",
+        "error": null,
+        "duration_seconds": 36.297,
+        "timestamp_utc": "2026-06-04T17:08:27.711078+00:00"
+      },
+      "input": {
+        "sample_id": "coordinator-20260604170904",
+        "task": "Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.",
+        "question": "Coordinator Agent: Given sub-agent signals, assess whether final fused decision is coherent, risk-aware, and operationally useful.",
+        "agent_input": {
+          "invocation": {
+            "mode": "agentic"
+          },
+          "entrypoint": "coordinator_agent/coordinator_core.py::CoordinatorAgent.run",
+          "depends_on": [
+            "technical",
+            "sentiment",
+            "risk",
+            "agentic_prototype.workflow"
+          ],
+          "expected_behavior": "Fuse technical/sentiment/risk into a final trading signal with confidence and reasoning."
+        },
+        "agent_prediction": {
+          "signal": "hold",
+          "confidence": 0.4339,
+          "score": -0.1398,
+          "risk_level": "medium_risk",
+          "key_factors": [
+            "Technical: HOLD (0.91)",
+            "Sentiment: HOLD (0.54)",
+            "Risk: MEDIUM_RISK (0.54)",
+            "Fusion: Agentic skill-based LangGraph workflow"
+          ],
+          "reasoning": "Agentic coordinator output score -0.14 with signal HOLD and confidence 0.43. Workflow reasoning: Coordinator Agent computed score -0.14 -> HOLD. Factors: technical=-0.21; sentiment=-0.09; risk=-0.07. Technical reason: Trade model probability is 0.09, below threshold 0.45; technical signal stays HOLD. Sentiment reason: **HOLD Signal: Neutral Market Conditions**\n\nThe HOLD signal is driven by neutral macroeconomic indicators and a low combined weighted sentiment score, offset by a slightly bullish community sentiment. The negative macroeconomic indicators outweigh the mixed sentiment analysis, indicating a need for caution. Traders should be aware of the recent 24-hour price decline and remain cautious in the face of uncertain market conditions. Risk reason: MEDIUM RISK signal generated with combined risk score of 0.54. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.44. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.",
+          "timestamp": "2026-06-04T19:09:04.007696",
+          "data_sources": [
+            "technical_analysis models",
+            "sentiment_analysis",
+            "agent_risk",
+            "agentic_prototype LangGraph"
+          ]
+        },
+        "final_agent_prompt": "Judge this agent by the appropriateness of its output for the provided input context and expected behavior.",
+        "reference_answer": null,
+        "metadata": {
+          "agent_name": "coordinator",
+          "status": "ok",
+          "error": null,
+          "duration_seconds": 36.297,
+          "timestamp_utc": "2026-06-04T17:08:27.711078+00:00"
+        }
+      },
+      "judge": {
+        "parse_status": "ok",
+        "score": 9,
+        "reasoning": "The Coordinator Agent successfully fused signals from technical, sentiment, and risk sub-agents into a coherent 'hold' decision. The output is well-structured, providing a clear signal, confidence, risk level, and detailed reasoning. The reasoning transparently explains how each sub-agent contributed to the final decision, demonstrating risk awareness and operational usefulness. The internal consistency between the final signal and the supporting sub-agent rationales is strong. The agent's behavior appears functionally sound for its role.",
+        "recommendations": [
+          "Clarify the interpretation of confidence scores within 'key_factors' (e.g., 'Technical: HOLD (Confidence: 0.91)') to explicitly distinguish them from raw scores or probabilities, even though the detailed reasoning provides context.",
+          "Investigate the 36-second duration for potential optimization, as faster response times can be critical in trading systems.",
+          "Consider adding a concise summary of the overall market outlook or prevailing conditions derived from the fused signals to provide additional context for the 'hold' decision."
+        ],
+        "raw_response": "```json\n{\n  \"score\": 9,\n  \"reasoning\": \"The Coordinator Agent successfully fused signals from technical, sentiment, and risk sub-agents into a coherent 'hold' decision. The output is well-structured, providing a clear signal, confidence, risk level, and detailed reasoning. The reasoning transparently explains how each sub-agent contributed to the final decision, demonstrating risk awareness and operational usefulness. The internal consistency between the final signal and the supporting sub-agent rationales is strong. The agent's behavior appears functionally sound for its role.\",\n  \"recommendations\": [\n    \"Clarify the interpretation of confidence scores within 'key_factors' (e.g., 'Technical: HOLD (Confidence: 0.91)') to explicitly distinguish them from raw scores or probabilities, even though the detailed reasoning provides context.\",\n    \"Investigate the 36-second duration for potential optimization, as faster response times can be critical in trading systems.\",\n    \"Consider adding a concise summary of the overall market outlook or prevailing conditions derived from the fused signals to provide additional context for the 'hold' decision.\"\n  ]\n}\n```"
+      },
+      "judge_prompt": "You are an impartial LLM-as-a-Judge for multi-agent trading systems.\nEvaluate this ONE agent using its actual input context and actual output.\nScore from 1 to 10 for correctness, relevance, usefulness, and whether behavior appears functionally sound for this agent role.\nIf the sample status is error/failure, score low and explain the failure impact.\nReturn STRICT JSON only matching this schema:\n{\n  \"score\": \"integer 1-10\",\n  \"reasoning\": \"concise explanation\",\n  \"recommendations\": [\n    \"short actionable recommendation\",\n    \"...\",\n    \"...\"\n  ]\n}\n\nAgent sample:\n{\n  \"task\": \"Evaluate if the agent output is good quality and if the agent appears to function correctly for its role.\",\n  \"question\": \"Coordinator Agent: Given sub-agent signals, assess whether final fused decision is coherent, risk-aware, and operationally useful.\",\n  \"agent_input\": {\n    \"invocation\": {\n      \"mode\": \"agentic\"\n    },\n    \"entrypoint\": \"coordinator_agent/coordinator_core.py::CoordinatorAgent.run\",\n    \"depends_on\": [\n      \"technical\",\n      \"sentiment\",\n      \"risk\",\n      \"agentic_prototype.workflow\"\n    ],\n    \"expected_behavior\": \"Fuse technical/sentiment/risk into a final trading signal with confidence and reasoning.\"\n  },\n  \"agent_prediction\": {\n    \"signal\": \"hold\",\n    \"confidence\": 0.4339,\n    \"score\": -0.1398,\n    \"risk_level\": \"medium_risk\",\n    \"key_factors\": [\n      \"Technical: HOLD (0.91)\",\n      \"Sentiment: HOLD (0.54)\",\n      \"Risk: MEDIUM_RISK (0.54)\",\n      \"Fusion: Agentic skill-based LangGraph workflow\"\n    ],\n    \"reasoning\": \"Agentic coordinator output score -0.14 with signal HOLD and confidence 0.43. Workflow reasoning: Coordinator Agent computed score -0.14 -> HOLD. Factors: technical=-0.21; sentiment=-0.09; risk=-0.07. Technical reason: Trade model probability is 0.09, below threshold 0.45; technical signal stays HOLD. Sentiment reason: **HOLD Signal: Neutral Market Conditions**\\n\\nThe HOLD signal is driven by neutral macroeconomic indicators and a low combined weighted sentiment score, offset by a slightly bullish community sentiment. The negative macroeconomic indicators outweigh the mixed sentiment analysis, indicating a need for caution. Traders should be aware of the recent 24-hour price decline and remain cautious in the face of uncertain market conditions. Risk reason: MEDIUM RISK signal generated with combined risk score of 0.54. On-chain analysis (3 metrics) shows moderate risk with score 0.60. Geopolitical analysis (20 events) indicates moderate risk with score 0.44. Market volatility is moderate (score: 0.45). Mixed risk signals suggest maintaining current positions with close monitoring.\",\n    \"timestamp\": \"2026-06-04T19:09:04.007696\",\n    \"data_sources\": [\n      \"technical_analysis models\",\n      \"sentiment_analysis\",\n      \"agent_risk\",\n      \"agentic_prototype LangGraph\"\n    ]\n  },\n  \"reference_answer\": null,\n  \"metadata\": {\n    \"agent_name\": \"coordinator\",\n    \"status\": \"ok\",\n    \"error\": null,\n    \"duration_seconds\": 36.297,\n    \"timestamp_utc\": \"2026-06-04T17:08:27.711078+00:00\"\n  }\n}"
+    }
+  ],
+  "aggregate_by_agent": {
+    "technical": {
+      "sample_count": 1,
+      "llm_parse_ok_count": 1,
+      "average_score": 9.0,
+      "min_score": 9.0,
+      "max_score": 9.0
+    },
+    "sentiment": {
+      "sample_count": 1,
+      "llm_parse_ok_count": 1,
+      "average_score": 9.0,
+      "min_score": 9.0,
+      "max_score": 9.0
+    },
+    "risk": {
+      "sample_count": 1,
+      "llm_parse_ok_count": 1,
+    },
+    "coordinator": {
+      "sample_count": 1,
+      "llm_parse_ok_count": 1,
+      "average_score": 9.0,
+      "min_score": 9.0,
+      "max_score": 9.0
+    }
+  }
+}
